@@ -10,8 +10,7 @@ Welcome to CPLN5920/MUSA5080! This guide will help you set up your personal port
 
 ## Example:
 
-This is an example Dr. Delmelle made. We are dropping the "weekly notes," but
-everything else is the same: **[Dr. Delmelle's sample portfolio](https://ecdelmelle.github.io/MUSA-5080-instructor-portfolio/)** 
+Here is one I made: **[Allison's sample portfolio](https://allisonlass.github.io/cpln-5902-student-site-example))** 
   
 
 ## Prerequisites
@@ -31,8 +30,8 @@ Now let's personalize it.
 #### 1.1 Edit Your Site Title
 1. Click on the `_quarto.yml` file
 2. Click the pencil icon (✏️) to edit
-3. Change `"Your Name - MUSA 5080 Portfolio"` to include your actual name
-4. Example: `"Jane Smith - MUSA 5080 Portfolio"`
+3. Change `"Your Name - CPLN 5920 Portfolio"` to include your actual name
+4. Example: `"Jane Smith - CPLN 5920 Portfolio"`
 5. Click **"Commit changes"** at the bottom
 
 #### 1.2 Update Your Homepage

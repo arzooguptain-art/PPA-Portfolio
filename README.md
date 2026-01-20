@@ -10,7 +10,7 @@ Welcome to CPLN5920/MUSA5080! This guide will help you set up your personal port
 
 ## Example:
 
-Here is one I made: **[Allison's sample portfolio](https://allisonlass.github.io/cpln-5902-student-site-example))** 
+Here is one I made: **[Allison's sample portfolio](https://allisonlass.github.io/cpln-5902-student-site-example)** 
   
 
 ## Prerequisites

@@ -84,10 +84,11 @@ cd [your-repository-name]
 ```
 
 ### Make Changes and Preview
+This code renders your qmd file as a html file and saves it in your \docs folder
 ```bash
 # Edit your files using RStudio
 # Preview your changes:
-quarto render
+quarto render --to html
 quarto preview
 #Hit Cntrl-C or Cmd-C when you are done to stop the preview
 

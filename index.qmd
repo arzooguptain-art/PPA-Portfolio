@@ -18,9 +18,9 @@ Advanced spatial analysis and data science for urban planning and public policy.
 
 ## About Me
 
-I am Arzoo Gupta, a Master of City Planning Student, with a concentration in sustainable transportation and with a background in Sociology and Anthropology, and Political Science. 
+I am Arzoo Gupta, a Master of City Planning Student, with a concentration in sustainable transportation and with a background in Sociology and Anthropology, and Political Science.
 
 ## Contact
 
--   Email: gupta4@upenn.edu
+-   Email: gupta4\@upenn.edu
 -   GitHub: @arzooguptain-art

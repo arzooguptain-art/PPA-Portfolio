@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Your Name Here">
+<meta name="author" content="Arzoo">
 <meta name="dcterms.date" content="2026-01-26">
 
 <title>Lab 0: Getting Started with dplyr – Arzoo Gupta - MUSA 5080 Portfolio</title>
@@ -185,7 +185,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#basic-summaries" id="toc-basic-summaries" class="nav-link" data-scroll-target="#basic-summaries">5.1 Basic Summaries</a></li>
   <li><a href="#categorical-summaries" id="toc-categorical-summaries" class="nav-link" data-scroll-target="#categorical-summaries">5.2 Categorical Summaries</a></li>
   </ul></li>
-  <li><a href="#submission-notes" id="toc-submission-notes" class="nav-link" data-scroll-target="#submission-notes">Submission Notes</a></li>
   </ul>
 </nav>
 </nav>
@@ -209,7 +208,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Your Name Here </p>
+             <p>Arzoo </p>
           </div>
   </div>
     
@@ -230,7 +229,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="overview" class="level1">
 <h1>Overview</h1>
-<p>Welcome to your first lab! In this (not graded) assignment, you’ll practice the fundamental dplyr operations I overviewed in class using car sales data. This lab will help you get comfortable with:</p>
+<p>This is the first lab, which is an exploratory exercise that introduced me to</p>
 <ul>
 <li>Basic data exploration</li>
 <li>Column selection and manipulation<br>
@@ -239,7 +238,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Filtering data</li>
 <li>Grouping and summarizing</li>
 </ul>
-<p><strong>Instructions:</strong> Copy this template into your portfolio repository under a <code>lab_0/</code> folder, then complete each section with your code and answers. You will write the code under the comment section in each chunk. Be sure to also copy the data folder into your <code>lab_0</code> folder.</p>
+<p>This also helped me get comfortable with building the github website and how to put together the folder structure.</p>
 </section>
 <section id="setup" class="level1">
 <h1>Setup</h1>
@@ -294,7 +293,7 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 </div>
 </div>
 <p><strong>Questions to answer:</strong> - How many rows and columns does the dataset have? - What types of variables do you see (numeric, character, etc.)? - Are there any column names that might cause problems? Why?</p>
-<p><strong>Your answers:</strong> -</p>
+<p><strong>Answers:</strong> -</p>
 <ol type="1">
 <li><p>Rows: 50,000</p></li>
 <li><p>Columns: 7<br>
@@ -28909,7 +28908,7 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 </div>
 </div>
 <p><strong>Question:</strong> What differences do you notice in how they print?</p>
-<p><strong>Your answer:</strong> Here they look the same but from the other example data frames often present all the information and are not easy to read, where as the tibbles shows only a few rows at a time in a scroll-able format. The Tibble format is easier and cleaner to perceive visually</p>
+<p><strong>Answer:</strong> Here they look the same but from the other example data frames often present all the information and are not easy to read, where as the tibbles shows only a few rows at a time in a scroll-able format. The Tibble format is easier and cleaner to perceive visually</p>
 </section>
 </section>
 <section id="exercise-2-basic-column-operations" class="level1">
@@ -28919,39 +28918,83 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 <p>Practice selecting different combinations of columns:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select just Model and Mileage columns</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>car_df_1<span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Mileage, Model)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Select Manufacturer, Price, and Fuel type</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>car_df_2 <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Manufacturer, Price, <span class="st">`</span><span class="at">Fuel type</span><span class="st">`</span>)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Challenge: Select all columns EXCEPT Engine Size</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>car_df_3 <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span> (<span class="sc">-</span><span class="st">`</span><span class="at">Engine size</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Mileage, Model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 50,000 × 2
+   Mileage Model     
+     &lt;dbl&gt; &lt;chr&gt;     
+ 1  127300 Fiesta    
+ 2   57850 718 Cayman
+ 3   39190 Mondeo    
+ 4  210814 RAV4      
+ 5  127869 Polo      
+ 6   33603 Focus     
+ 7   86686 Mondeo    
+ 8   30663 Prius     
+ 9   73470 Polo      
+10  262514 Focus     
+# ℹ 49,990 more rows</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select Manufacturer, Price, and Fuel type</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Manufacturer, Price, <span class="st">`</span><span class="at">Fuel type</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 50,000 × 3
+   Manufacturer Price `Fuel type`
+   &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;      
+ 1 Ford          3074 Petrol     
+ 2 Porsche      49704 Petrol     
+ 3 Ford         24072 Diesel     
+ 4 Toyota        1705 Hybrid     
+ 5 VW            4101 Petrol     
+ 6 Ford         29204 Petrol     
+ 7 Ford         14350 Diesel     
+ 8 Toyota       30297 Hybrid     
+ 9 VW            9977 Petrol     
+10 Ford          1049 Diesel     
+# ℹ 49,990 more rows</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Challenge: Select all columns EXCEPT Engine Size</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span> (<span class="sc">-</span><span class="st">`</span><span class="at">Engine size</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 50,000 × 6
+   Manufacturer Model      `Fuel type` `Year of manufacture` Mileage Price
+   &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;                       &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+ 1 Ford         Fiesta     Petrol                       2002  127300  3074
+ 2 Porsche      718 Cayman Petrol                       2016   57850 49704
+ 3 Ford         Mondeo     Diesel                       2014   39190 24072
+ 4 Toyota       RAV4       Hybrid                       1988  210814  1705
+ 5 VW           Polo       Petrol                       2006  127869  4101
+ 6 Ford         Focus      Petrol                       2018   33603 29204
+ 7 Ford         Mondeo     Diesel                       2010   86686 14350
+ 8 Toyota       Prius      Hybrid                       2015   30663 30297
+ 9 VW           Polo       Petrol                       2012   73470  9977
+10 Ford         Focus      Diesel                       1992  262514  1049
+# ℹ 49,990 more rows</code></pre>
+</div>
 </div>
 </section>
 <section id="renaming-columns" class="level2">
 <h2 class="anchored" data-anchor-id="renaming-columns">2.2 Renaming Columns</h2>
 <p>Let’s fix a problematic column name:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename 'Year of manufacture' to year</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>( <span class="at">Year =</span> <span class="st">`</span><span class="at">Year of manufacture</span><span class="st">`</span>, <span class="at">Size =</span> <span class="st">`</span><span class="at">Engine size</span><span class="st">`</span> , <span class="at">Fuel =</span> <span class="st">`</span><span class="at">Fuel type</span><span class="st">`</span>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that it worked</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename 'Year of manufacture' to year</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>( <span class="at">Year =</span> <span class="st">`</span><span class="at">Year of manufacture</span><span class="st">`</span>, <span class="at">Size =</span> <span class="st">`</span><span class="at">Engine size</span><span class="st">`</span> , <span class="at">Fuel =</span> <span class="st">`</span><span class="at">Fuel type</span><span class="st">`</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that it worked</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Manufacturer" "Model"        "Size"         "Fuel"         "Year"        
 [6] "Mileage"      "Price"       </code></pre>
 </div>
 </div>
 <p><strong>Question:</strong> Why did we need backticks around <code>Year of manufacture</code> but not around <code>year</code>?</p>
-<p><strong>Your answer:</strong> The backticks help R read the space in the column names and makes it analysable whereas Year has no spaces sin the name of the column.</p>
+<p><strong>Answer:</strong> The backticks help R read the space in the column names and makes it analysable whereas Year has no spaces sin the name of the column.</p>
 </section>
 </section>
 <section id="exercise-3-creating-new-columns" class="level1">
@@ -28959,26 +29002,26 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 <section id="calculate-car-age" class="level2">
 <h2 class="anchored" data-anchor-id="calculate-car-age">3.1 Calculate Car Age</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an 'age' column (2025 minus year of manufacture)</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>car_data<span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">age =</span> (<span class="dv">2025</span><span class="sc">-</span> Year))</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mileage_per_year column  </span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> ( <span class="at">mileage_per_year =</span> Mileage<span class="sc">/</span> Year)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at your new columns</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an 'age' column (2025 minus year of manufacture)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>car_data<span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">age =</span> (<span class="dv">2025</span><span class="sc">-</span> Year))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mileage_per_year column  </span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> ( <span class="at">mileage_per_year =</span> Mileage<span class="sc">/</span> Year)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at your new columns</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Manufacturer"     "Model"            "Size"             "Fuel"            
 [5] "Year"             "Mileage"          "Price"            "age"             
 [9] "mileage_per_year"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select(car_data, Model, year, age, Mileage, mileage_per_year)</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( Model, Year, age, Mileage, mileage_per_year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select(car_data, Model, year, age, Mileage, mileage_per_year)</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( Model, Year, age, Mileage, mileage_per_year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 50,000 × 5
    Model       Year   age Mileage mileage_per_year
@@ -29000,19 +29043,19 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 <section id="categorize-cars" class="level2">
 <h2 class="anchored" data-anchor-id="categorize-cars">3.2 Categorize Cars</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a price_category column where if price is &lt; 15000, its is coded as budget, between 15000 and 30000 is midrange and greater than 30000 is mid-range (use case_when)</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">price_category =</span> <span class="fu">case_when</span>( Price <span class="sc">&lt;</span> <span class="dv">15000</span> <span class="sc">~</span> <span class="st">"budget"</span>,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>      Price <span class="sc">&gt;=</span> <span class="dv">15000</span> <span class="sc">&amp;</span> Price <span class="sc">&lt;</span> <span class="dv">30000</span> <span class="sc">~</span> <span class="st">"midrange"</span>,</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>      Price <span class="sc">&gt;=</span> <span class="dv">30000</span> <span class="sc">~</span> <span class="st">"luxury"</span>))</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Check your categories select the new column and show it</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( Model, Price, price_category)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a price_category column where if price is &lt; 15000, its is coded as budget, between 15000 and 30000 is midrange and greater than 30000 is mid-range (use case_when)</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">price_category =</span> <span class="fu">case_when</span>( Price <span class="sc">&lt;</span> <span class="dv">15000</span> <span class="sc">~</span> <span class="st">"budget"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>      Price <span class="sc">&gt;=</span> <span class="dv">15000</span> <span class="sc">&amp;</span> Price <span class="sc">&lt;</span> <span class="dv">30000</span> <span class="sc">~</span> <span class="st">"midrange"</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>      Price <span class="sc">&gt;=</span> <span class="dv">30000</span> <span class="sc">~</span> <span class="st">"luxury"</span>))</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Check your categories select the new column and show it</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( Model, Price, price_category)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 50,000 × 3
    Model      Price price_category
@@ -29037,11 +29080,11 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 <section id="basic-filtering" class="level2">
 <h2 class="anchored" data-anchor-id="basic-filtering">4.1 Basic Filtering</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find all Toyota cars</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>toyota_car <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Manufacturer <span class="sc">==</span> <span class="st">"Toyota"</span>)</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>toyota_car</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find all Toyota cars</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>toyota_car <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Manufacturer <span class="sc">==</span> <span class="st">"Toyota"</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>toyota_car</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 12,554 × 10
    Manufacturer Model  Size Fuel    Year Mileage Price   age mileage_per_year
@@ -29059,11 +29102,11 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 # ℹ 12,544 more rows
 # ℹ 1 more variable: price_category &lt;chr&gt;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars with mileage less than 30,000</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>low_mileage <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> ( Mileage <span class="sc">&lt;</span> <span class="dv">30000</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>low_mileage</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars with mileage less than 30,000</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>low_mileage <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> ( Mileage <span class="sc">&lt;</span> <span class="dv">30000</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>low_mileage</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5,402 × 10
    Manufacturer Model      Size Fuel   Year Mileage Price   age mileage_per_year
@@ -29081,11 +29124,11 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 # ℹ 5,392 more rows
 # ℹ 1 more variable: price_category &lt;chr&gt;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find luxury cars (from price category) with low mileage</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>high_value_cars <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Mileage <span class="sc">&lt;</span> <span class="dv">30000</span> <span class="sc">&amp;</span> price_category <span class="sc">==</span> <span class="st">"luxury"</span>)</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>high_value_cars</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find luxury cars (from price category) with low mileage</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>high_value_cars <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Mileage <span class="sc">&lt;</span> <span class="dv">30000</span> <span class="sc">&amp;</span> price_category <span class="sc">==</span> <span class="st">"luxury"</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>high_value_cars</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3,257 × 10
    Manufacturer Model      Size Fuel   Year Mileage Price   age mileage_per_year
@@ -29108,18 +29151,18 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 <section id="multiple-conditions" class="level2">
 <h2 class="anchored" data-anchor-id="multiple-conditions">4.2 Multiple Conditions</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars that are EITHER Honda OR Nissan</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Manufacturer <span class="sc">==</span> <span class="st">"Honda"</span> <span class="sc">|</span> Manufacturer <span class="sc">==</span> <span class="st">"Nissan"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars that are EITHER Honda OR Nissan</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Manufacturer <span class="sc">==</span> <span class="st">"Honda"</span> <span class="sc">|</span> Manufacturer <span class="sc">==</span> <span class="st">"Nissan"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 0 × 10
 # ℹ 10 variables: Manufacturer &lt;chr&gt;, Model &lt;chr&gt;, Size &lt;dbl&gt;, Fuel &lt;chr&gt;,
 #   Year &lt;dbl&gt;, Mileage &lt;dbl&gt;, Price &lt;dbl&gt;, age &lt;dbl&gt;, mileage_per_year &lt;dbl&gt;,
 #   price_category &lt;chr&gt;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars with price between $20,000 and $35,000</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> ( Price <span class="sc">&gt;=</span> <span class="dv">20000</span> <span class="sc">&amp;</span> Price <span class="sc">&lt;=</span> <span class="dv">35000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars with price between $20,000 and $35,000</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> ( Price <span class="sc">&gt;=</span> <span class="dv">20000</span> <span class="sc">&amp;</span> Price <span class="sc">&lt;=</span> <span class="dv">35000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7,301 × 10
    Manufacturer Model   Size Fuel    Year Mileage Price   age mileage_per_year
@@ -29137,10 +29180,10 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 # ℹ 7,291 more rows
 # ℹ 1 more variable: price_category &lt;chr&gt;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find diesel cars less than 10 years old</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Fuel <span class="sc">==</span> <span class="st">"Diesel"</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find diesel cars less than 10 years old</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Fuel <span class="sc">==</span> <span class="st">"Diesel"</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,040 × 10
    Manufacturer Model    Size Fuel    Year Mileage Price   age mileage_per_year
@@ -29160,7 +29203,7 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 </div>
 </div>
 <p><strong>Question:</strong> How many diesel cars are less than 10 years old?</p>
-<p><strong>Your answer:</strong> 2040 Cars</p>
+<p><strong>Answer:</strong> 2040 Cars</p>
 </section>
 </section>
 <section id="exercise-5-grouping-and-summarizing" class="level1">
@@ -29168,12 +29211,12 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 <section id="basic-summaries" class="level2">
 <h2 class="anchored" data-anchor-id="basic-summaries">5.1 Basic Summaries</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average price by manufacturer</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>avg_price_by_brand <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Manufacturer) <span class="sc">%&gt;%</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_price =</span> <span class="fu">mean</span>(Price, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>avg_price_by_brand</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average price by manufacturer</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>avg_price_by_brand <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Manufacturer) <span class="sc">%&gt;%</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_price =</span> <span class="fu">mean</span>(Price, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>avg_price_by_brand</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   Manufacturer avg_price
@@ -29184,13 +29227,13 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 4 Toyota          14340.
 5 VW              10363.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average mileage by fuel type</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>avg_mileage_by_fuel <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span> (Fuel) <span class="sc">%&gt;%</span> </span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>( <span class="at">avg_mileage =</span> <span class="fu">mean</span>(Mileage , <span class="at">na.rm =</span> T))</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>avg_mileage_by_fuel</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average mileage by fuel type</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>avg_mileage_by_fuel <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span> (Fuel) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>( <span class="at">avg_mileage =</span> <span class="fu">mean</span>(Mileage , <span class="at">na.rm =</span> T))</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>avg_mileage_by_fuel</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 2
   Fuel   avg_mileage
@@ -29199,10 +29242,10 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 2 Hybrid     111622.
 3 Petrol     112795.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count cars by manufacturer</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>no_cars_manufacturer <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">count</span>(Manufacturer, <span class="at">name =</span> <span class="st">"Cars"</span>)</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>no_cars_manufacturer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count cars by manufacturer</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>no_cars_manufacturer <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">count</span>(Manufacturer, <span class="at">name =</span> <span class="st">"Cars"</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>no_cars_manufacturer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   Manufacturer  Cars
@@ -29218,10 +29261,10 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 <section id="categorical-summaries" class="level2">
 <h2 class="anchored" data-anchor-id="categorical-summaries">5.2 Categorical Summaries</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Frequency table for price categories</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(price_category , <span class="at">name =</span> <span class="st">"Cars"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Percentage =</span> Cars <span class="sc">/</span> <span class="fu">sum</span>( Cars) <span class="sc">*</span> <span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Frequency table for price categories</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(price_category , <span class="at">name =</span> <span class="st">"Cars"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Percentage =</span> Cars <span class="sc">/</span> <span class="fu">sum</span>( Cars) <span class="sc">*</span> <span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 3
   price_category  Cars Percentage
@@ -29231,14 +29274,9 @@ $ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350
 3 midrange        9781       19.6</code></pre>
 </div>
 </div>
-</section>
-</section>
-<section id="submission-notes" class="level1">
-<h1>Submission Notes</h1>
-<p><strong>To submit this lab:</strong> 1. Make sure your code runs without errors 2. Fill in all the “[YOUR ANSWER]” sections and complete all of the empty code! 3. Save this file in your portfolio’s <code>lab_0/</code> folder 4. Commit and push to GitHub 5. Check that it appears on your GitHub Pages portfolio site</p>
-<p><strong>Questions?</strong> Post on the canvas discussion board or come to office hours!</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

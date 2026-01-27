@@ -132,10 +132,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../labs/index.qmd"> 
-<span class="menu-text">Labs</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-labs" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Labs</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-labs">    
+        <li>
+    <a class="dropdown-item" href="../../Labs/Lab_0/lab0template.qmd">
+ <span class="dropdown-text">Lab 0</span></a>
   </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -252,13 +259,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Explore the structure of your data and answer these questions:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use glimpse() to see the data structure</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the column names</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the first few rows</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 50,000
+Columns: 7
+$ Manufacturer          &lt;chr&gt; "Ford", "Porsche", "Ford", "Toyota", "VW", "Ford…
+$ Model                 &lt;chr&gt; "Fiesta", "718 Cayman", "Mondeo", "RAV4", "Polo"…
+$ `Engine size`         &lt;dbl&gt; 1.0, 4.0, 1.6, 1.8, 1.0, 1.4, 1.8, 1.4, 1.2, 2.0…
+$ `Fuel type`           &lt;chr&gt; "Petrol", "Petrol", "Diesel", "Hybrid", "Petrol"…
+$ `Year of manufacture` &lt;dbl&gt; 2002, 2016, 2014, 1988, 2006, 2018, 2010, 2015, …
+$ Mileage               &lt;dbl&gt; 127300, 57850, 39190, 210814, 127869, 33603, 866…
+$ Price                 &lt;dbl&gt; 3074, 49704, 24072, 1705, 4101, 29204, 14350, 30…</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the column names</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Manufacturer"        "Model"               "Engine size"        
+[4] "Fuel type"           "Year of manufacture" "Mileage"            
+[7] "Price"              </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the first few rows</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 7
   Manufacturer Model     `Engine size` `Fuel type` `Year of manufacture` Mileage
@@ -273,15 +294,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p><strong>Questions to answer:</strong> - How many rows and columns does the dataset have? - What types of variables do you see (numeric, character, etc.)? - Are there any column names that might cause problems? Why?</p>
-<p><strong>Your answers:</strong> - Rows: [YOUR ANSWER] - Columns: [YOUR ANSWER]<br>
-- Variable types: [YOUR ANSWER] - Problematic names: [YOUR ANSWER]</p>
+<p><strong>Your answers:</strong> -</p>
+<ol type="1">
+<li><p>Rows: 50,000</p></li>
+<li><p>Columns: 7<br>
+</p>
+<ul>
+<li>Variable types:</li>
+</ul>
+<p>Character and Numeric</p></li>
+<li><p>Problematic names: Engine Size, Fuel Type, Year of Manufacture, this is because they have spaces in the titles and R has trouble reading space, without an underscore, it becomes hard to conduct analysis on these columns easily as R may struggle to read them.</p></li>
+</ol>
 </section>
 <section id="tibble-vs-data-frame" class="level2">
 <h2 class="anchored" data-anchor-id="tibble-vs-data-frame">1.2 Tibble vs Data Frame</h2>
 <p>Compare how tibbles and data frames display:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the tibble version (what we have)</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>car_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the tibble version (what we have)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>car_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 50,000 × 7
    Manufacturer Model    `Engine size` `Fuel type` `Year of manufacture` Mileage
@@ -299,9 +329,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 49,990 more rows
 # ℹ 1 more variable: Price &lt;dbl&gt;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to regular data frame and display</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>car_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(car_data)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>car_df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to regular data frame and display</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>car_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(car_data)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>car_df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      Manufacturer      Model Engine size Fuel type Year of manufacture Mileage
 1             Ford     Fiesta         1.0    Petrol                2002  127300
@@ -28879,7 +28909,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p><strong>Question:</strong> What differences do you notice in how they print?</p>
-<p><strong>Your answer:</strong> [YOUR ANSWER]</p>
+<p><strong>Your answer:</strong> Here they look the same but from the other example data frames often present all the information and are not easy to read, where as the tibbles shows only a few rows at a time in a scroll-able format. The Tibble format is easier and cleaner to perceive visually</p>
 </section>
 </section>
 <section id="exercise-2-basic-column-operations" class="level1">
@@ -28888,32 +28918,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="selecting-columns">2.1 Selecting Columns</h2>
 <p>Practice selecting different combinations of columns:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select just Model and Mileage columns</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Select Manufacturer, Price, and Fuel type</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Challenge: Select all columns EXCEPT Engine Size</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select just Model and Mileage columns</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>car_df_1<span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Mileage, Model)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Select Manufacturer, Price, and Fuel type</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>car_df_2 <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Manufacturer, Price, <span class="st">`</span><span class="at">Fuel type</span><span class="st">`</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Challenge: Select all columns EXCEPT Engine Size</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>car_df_3 <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span> (<span class="sc">-</span><span class="st">`</span><span class="at">Engine size</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="renaming-columns" class="level2">
 <h2 class="anchored" data-anchor-id="renaming-columns">2.2 Renaming Columns</h2>
 <p>Let’s fix a problematic column name:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename 'Year of manufacture' to year</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that it worked</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename 'Year of manufacture' to year</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>( <span class="at">Year =</span> <span class="st">`</span><span class="at">Year of manufacture</span><span class="st">`</span>, <span class="at">Size =</span> <span class="st">`</span><span class="at">Engine size</span><span class="st">`</span> , <span class="at">Fuel =</span> <span class="st">`</span><span class="at">Fuel type</span><span class="st">`</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that it worked</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Manufacturer"        "Model"               "Engine size"        
-[4] "Fuel type"           "Year of manufacture" "Mileage"            
-[7] "Price"              </code></pre>
+<pre><code>[1] "Manufacturer" "Model"        "Size"         "Fuel"         "Year"        
+[6] "Mileage"      "Price"       </code></pre>
 </div>
 </div>
 <p><strong>Question:</strong> Why did we need backticks around <code>Year of manufacture</code> but not around <code>year</code>?</p>
-<p><strong>Your answer:</strong> [YOUR ANSWER]</p>
+<p><strong>Your answer:</strong> The backticks help R read the space in the column names and makes it analysable whereas Year has no spaces sin the name of the column.</p>
 </section>
 </section>
 <section id="exercise-3-creating-new-columns" class="level1">
@@ -28921,23 +28959,76 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="calculate-car-age" class="level2">
 <h2 class="anchored" data-anchor-id="calculate-car-age">3.1 Calculate Car Age</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an 'age' column (2025 minus year of manufacture)</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mileage_per_year column  </span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at your new columns</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#select(car_data, Model, year, age, Mileage, mileage_per_year)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an 'age' column (2025 minus year of manufacture)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>car_data<span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">age =</span> (<span class="dv">2025</span><span class="sc">-</span> Year))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mileage_per_year column  </span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> ( <span class="at">mileage_per_year =</span> Mileage<span class="sc">/</span> Year)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at your new columns</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(car_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Manufacturer"     "Model"            "Size"             "Fuel"            
+[5] "Year"             "Mileage"          "Price"            "age"             
+[9] "mileage_per_year"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select(car_data, Model, year, age, Mileage, mileage_per_year)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( Model, Year, age, Mileage, mileage_per_year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 50,000 × 5
+   Model       Year   age Mileage mileage_per_year
+   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Fiesta      2002    23  127300             63.6
+ 2 718 Cayman  2016     9   57850             28.7
+ 3 Mondeo      2014    11   39190             19.5
+ 4 RAV4        1988    37  210814            106. 
+ 5 Polo        2006    19  127869             63.7
+ 6 Focus       2018     7   33603             16.7
+ 7 Mondeo      2010    15   86686             43.1
+ 8 Prius       2015    10   30663             15.2
+ 9 Polo        2012    13   73470             36.5
+10 Focus       1992    33  262514            132. 
+# ℹ 49,990 more rows</code></pre>
+</div>
 </div>
 </section>
 <section id="categorize-cars" class="level2">
 <h2 class="anchored" data-anchor-id="categorize-cars">3.2 Categorize Cars</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a price_category column where if price is &lt; 15000, its is coded as budget, between 15000 and 30000 is midrange and greater than 30000 is mid-range (use case_when)</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check your categories select the new column and show it</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a price_category column where if price is &lt; 15000, its is coded as budget, between 15000 and 30000 is midrange and greater than 30000 is mid-range (use case_when)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>car_data <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">price_category =</span> <span class="fu">case_when</span>( Price <span class="sc">&lt;</span> <span class="dv">15000</span> <span class="sc">~</span> <span class="st">"budget"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>      Price <span class="sc">&gt;=</span> <span class="dv">15000</span> <span class="sc">&amp;</span> Price <span class="sc">&lt;</span> <span class="dv">30000</span> <span class="sc">~</span> <span class="st">"midrange"</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>      Price <span class="sc">&gt;=</span> <span class="dv">30000</span> <span class="sc">~</span> <span class="st">"luxury"</span>))</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Check your categories select the new column and show it</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( Model, Price, price_category)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 50,000 × 3
+   Model      Price price_category
+   &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;         
+ 1 Fiesta      3074 budget        
+ 2 718 Cayman 49704 luxury        
+ 3 Mondeo     24072 midrange      
+ 4 RAV4        1705 budget        
+ 5 Polo        4101 budget        
+ 6 Focus      29204 midrange      
+ 7 Mondeo     14350 budget        
+ 8 Prius      30297 luxury        
+ 9 Polo        9977 budget        
+10 Focus       1049 budget        
+# ℹ 49,990 more rows</code></pre>
+</div>
 </div>
 </section>
 </section>
@@ -28946,28 +29037,130 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="basic-filtering" class="level2">
 <h2 class="anchored" data-anchor-id="basic-filtering">4.1 Basic Filtering</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find all Toyota cars</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars with mileage less than 30,000</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Find luxury cars (from price category) with low mileage</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find all Toyota cars</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>toyota_car <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Manufacturer <span class="sc">==</span> <span class="st">"Toyota"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>toyota_car</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12,554 × 10
+   Manufacturer Model  Size Fuel    Year Mileage Price   age mileage_per_year
+   &lt;chr&gt;        &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Toyota       RAV4    1.8 Hybrid  1988  210814  1705    37            106. 
+ 2 Toyota       Prius   1.4 Hybrid  2015   30663 30297    10             15.2
+ 3 Toyota       RAV4    2.2 Petrol  2007   79393 16026    18             39.6
+ 4 Toyota       Yaris   1.4 Petrol  1998   97286  4046    27             48.7
+ 5 Toyota       RAV4    2.4 Hybrid  2003  117425 11667    22             58.6
+ 6 Toyota       Yaris   1.2 Petrol  1992  245990   720    33            123. 
+ 7 Toyota       RAV4    2   Hybrid  2018   28381 52671     7             14.1
+ 8 Toyota       Prius   1   Hybrid  2003  115291  6512    22             57.6
+ 9 Toyota       Prius   1   Hybrid  1990  238571   961    35            120. 
+10 Toyota       Prius   1.8 Hybrid  2017   31958 38961     8             15.8
+# ℹ 12,544 more rows
+# ℹ 1 more variable: price_category &lt;chr&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars with mileage less than 30,000</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>low_mileage <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> ( Mileage <span class="sc">&lt;</span> <span class="dv">30000</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>low_mileage</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5,402 × 10
+   Manufacturer Model      Size Fuel   Year Mileage Price   age mileage_per_year
+   &lt;chr&gt;        &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Toyota       RAV4        2   Hybr…  2018   28381 52671     7            14.1 
+ 2 VW           Golf        2   Petr…  2020   18985 36387     5             9.40
+ 3 BMW          M5          4   Petr…  2017   22759 97758     8            11.3 
+ 4 Toyota       RAV4        2.4 Petr…  2018   24588 49125     7            12.2 
+ 5 VW           Golf        2   Hybr…  2018   25017 36957     7            12.4 
+ 6 Porsche      718 Caym…   2.4 Petr…  2021   14070 69526     4             6.96
+ 7 Ford         Focus       1.8 Petr…  2020   22371 40336     5            11.1 
+ 8 Ford         Mondeo      1.6 Dies…  2015   21834 28435    10            10.8 
+ 9 VW           Passat      1.6 Dies…  2018   22122 36634     7            11.0 
+10 VW           Passat      1.4 Dies…  2020   21413 39310     5            10.6 
+# ℹ 5,392 more rows
+# ℹ 1 more variable: price_category &lt;chr&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find luxury cars (from price category) with low mileage</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>high_value_cars <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Mileage <span class="sc">&lt;</span> <span class="dv">30000</span> <span class="sc">&amp;</span> price_category <span class="sc">==</span> <span class="st">"luxury"</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>high_value_cars</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3,257 × 10
+   Manufacturer Model      Size Fuel   Year Mileage Price   age mileage_per_year
+   &lt;chr&gt;        &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Toyota       RAV4        2   Hybr…  2018   28381 52671     7            14.1 
+ 2 VW           Golf        2   Petr…  2020   18985 36387     5             9.40
+ 3 BMW          M5          4   Petr…  2017   22759 97758     8            11.3 
+ 4 Toyota       RAV4        2.4 Petr…  2018   24588 49125     7            12.2 
+ 5 VW           Golf        2   Hybr…  2018   25017 36957     7            12.4 
+ 6 Porsche      718 Caym…   2.4 Petr…  2021   14070 69526     4             6.96
+ 7 Ford         Focus       1.8 Petr…  2020   22371 40336     5            11.1 
+ 8 VW           Passat      1.6 Dies…  2018   22122 36634     7            11.0 
+ 9 VW           Passat      1.4 Dies…  2020   21413 39310     5            10.6 
+10 Toyota       RAV4        2.4 Petr…  2021    6829 66031     4             3.38
+# ℹ 3,247 more rows
+# ℹ 1 more variable: price_category &lt;chr&gt;</code></pre>
+</div>
 </div>
 </section>
 <section id="multiple-conditions" class="level2">
 <h2 class="anchored" data-anchor-id="multiple-conditions">4.2 Multiple Conditions</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars that are EITHER Honda OR Nissan</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars with price between $20,000 and $35,000</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Find diesel cars less than 10 years old</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars that are EITHER Honda OR Nissan</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Manufacturer <span class="sc">==</span> <span class="st">"Honda"</span> <span class="sc">|</span> Manufacturer <span class="sc">==</span> <span class="st">"Nissan"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 10
+# ℹ 10 variables: Manufacturer &lt;chr&gt;, Model &lt;chr&gt;, Size &lt;dbl&gt;, Fuel &lt;chr&gt;,
+#   Year &lt;dbl&gt;, Mileage &lt;dbl&gt;, Price &lt;dbl&gt;, age &lt;dbl&gt;, mileage_per_year &lt;dbl&gt;,
+#   price_category &lt;chr&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find cars with price between $20,000 and $35,000</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> ( Price <span class="sc">&gt;=</span> <span class="dv">20000</span> <span class="sc">&amp;</span> Price <span class="sc">&lt;=</span> <span class="dv">35000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7,301 × 10
+   Manufacturer Model   Size Fuel    Year Mileage Price   age mileage_per_year
+   &lt;chr&gt;        &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Ford         Mondeo   1.6 Diesel  2014   39190 24072    11             19.5
+ 2 Ford         Focus    1.4 Petrol  2018   33603 29204     7             16.7
+ 3 Toyota       Prius    1.4 Hybrid  2015   30663 30297    10             15.2
+ 4 Toyota       Prius    1.4 Hybrid  2016   43893 29946     9             21.8
+ 5 Toyota       Prius    1.4 Hybrid  2016   43130 30085     9             21.4
+ 6 VW           Passat   1.6 Petrol  2016   64344 23641     9             31.9
+ 7 Ford         Mondeo   1.6 Diesel  2015   21834 28435    10             10.8
+ 8 BMW          M5       4.4 Petrol  2008  109941 31711    17             54.8
+ 9 BMW          Z4       2.2 Petrol  2014   61332 26084    11             30.5
+10 Porsche      911      3.5 Petrol  2003  107705 24378    22             53.8
+# ℹ 7,291 more rows
+# ℹ 1 more variable: price_category &lt;chr&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find diesel cars less than 10 years old</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( Fuel <span class="sc">==</span> <span class="st">"Diesel"</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2,040 × 10
+   Manufacturer Model    Size Fuel    Year Mileage Price   age mileage_per_year
+   &lt;chr&gt;        &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Ford         Fiesta    1   Diesel  2017   38370 16257     8            19.0 
+ 2 VW           Passat    1.6 Diesel  2018   22122 36634     7            11.0 
+ 3 VW           Passat    1.4 Diesel  2020   21413 39310     5            10.6 
+ 4 BMW          X3        2   Diesel  2018   27389 44018     7            13.6 
+ 5 Ford         Mondeo    2   Diesel  2016   51724 28482     9            25.7 
+ 6 Porsche      Cayenne   2.6 Diesel  2019   20147 76182     6             9.98
+ 7 VW           Polo      1.2 Diesel  2018   37411 19649     7            18.5 
+ 8 Ford         Mondeo    1.8 Diesel  2016   29439 30886     9            14.6 
+ 9 Ford         Mondeo    1.4 Diesel  2020   18929 37720     5             9.37
+10 Ford         Mondeo    1.4 Diesel  2018   42017 28904     7            20.8 
+# ℹ 2,030 more rows
+# ℹ 1 more variable: price_category &lt;chr&gt;</code></pre>
+</div>
 </div>
 <p><strong>Question:</strong> How many diesel cars are less than 10 years old?</p>
-<p><strong>Your answer:</strong> [YOUR ANSWER]</p>
+<p><strong>Your answer:</strong> 2040 Cars</p>
 </section>
 </section>
 <section id="exercise-5-grouping-and-summarizing" class="level1">
@@ -28975,12 +29168,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="basic-summaries" class="level2">
 <h2 class="anchored" data-anchor-id="basic-summaries">5.1 Basic Summaries</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average price by manufacturer</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>avg_price_by_brand <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Manufacturer) <span class="sc">%&gt;%</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_price =</span> <span class="fu">mean</span>(Price, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>avg_price_by_brand</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average price by manufacturer</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>avg_price_by_brand <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Manufacturer) <span class="sc">%&gt;%</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_price =</span> <span class="fu">mean</span>(Price, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>avg_price_by_brand</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   Manufacturer avg_price
@@ -28991,16 +29184,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 4 Toyota          14340.
 5 VW              10363.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average mileage by fuel type</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Count cars by manufacturer</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average mileage by fuel type</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>avg_mileage_by_fuel <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span> (Fuel) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>( <span class="at">avg_mileage =</span> <span class="fu">mean</span>(Mileage , <span class="at">na.rm =</span> T))</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>avg_mileage_by_fuel</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  Fuel   avg_mileage
+  &lt;chr&gt;        &lt;dbl&gt;
+1 Diesel     112667.
+2 Hybrid     111622.
+3 Petrol     112795.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count cars by manufacturer</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>no_cars_manufacturer <span class="ot">&lt;-</span> car_data <span class="sc">%&gt;%</span> </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">count</span>(Manufacturer, <span class="at">name =</span> <span class="st">"Cars"</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>no_cars_manufacturer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  Manufacturer  Cars
+  &lt;chr&gt;        &lt;int&gt;
+1 BMW           4965
+2 Ford         14959
+3 Porsche       2609
+4 Toyota       12554
+5 VW           14913</code></pre>
+</div>
 </div>
 </section>
 <section id="categorical-summaries" class="level2">
 <h2 class="anchored" data-anchor-id="categorical-summaries">5.2 Categorical Summaries</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Frequency table for price categories</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Frequency table for price categories</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>car_data <span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(price_category , <span class="at">name =</span> <span class="st">"Cars"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Percentage =</span> Cars <span class="sc">/</span> <span class="fu">sum</span>( Cars) <span class="sc">*</span> <span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  price_category  Cars Percentage
+  &lt;chr&gt;          &lt;int&gt;      &lt;dbl&gt;
+1 budget         34040       68.1
+2 luxury          6179       12.4
+3 midrange        9781       19.6</code></pre>
+</div>
 </div>
 </section>
 </section>

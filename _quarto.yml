@@ -8,9 +8,11 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: labs/index.qmd
-        text: Labs
-
+      - text: Labs
+        menu: 
+          - href: Labs/Lab_0/lab0template.qmd
+            text: Lab 0
+       
 format:
   html:
     theme: cosmo

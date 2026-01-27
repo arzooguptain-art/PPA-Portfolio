@@ -2,12 +2,16 @@ project:
   type: website
   output-dir: docs
 
+
 website:
-  title: "Your Name - MUSA 5080 Portfolio"
+  title: "Arzoo Gupta - MUSA 5080 Portfolio"
   navbar:
     left:
       - href: index.qmd
         text: Home
+      - href: labs/index.qmd
+        text: Labs
+      
 
 format:
   html:

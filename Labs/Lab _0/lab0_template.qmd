@@ -1,7 +1,7 @@
 ---
 title: "Lab 0: Getting Started with dplyr"
 subtitle: "Your First Data Analysis"
-author: "Your Name Here"
+author: "Arzoo"
 date: today
 format: 
   html:
@@ -12,20 +12,27 @@ format:
 execute:
   warning: false
   message: false
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 # Overview
 
-Welcome to your first lab! In this (not graded) assignment, you'll practice the fundamental dplyr operations I overviewed in class using car sales data. This lab will help you get comfortable with:
+Welcome to your first lab! In this (not graded) assignment, you'll
+practice the fundamental dplyr operations I overviewed in class using
+car sales data. This lab will help you get comfortable with:
 
-- Basic data exploration
-- Column selection and manipulation  
-- Creating new variables
-- Filtering data
-- Grouping and summarizing
+-   Basic data exploration
+-   Column selection and manipulation\
+-   Creating new variables
+-   Filtering data
+-   Grouping and summarizing
 
-**Instructions:** Copy this template into your portfolio repository under a `lab_0/` folder, then complete each section with your code and answers. You will write the code under the comment section in each chunk.
-Be sure to also copy the data folder into your `lab_0` folder.
+**Instructions:** Copy this template into your portfolio repository
+under a `lab_0/` folder, then complete each section with your code and
+answers. You will write the code under the comment section in each
+chunk. Be sure to also copy the data folder into your `lab_0` folder.
 
 # Setup
 
@@ -35,7 +42,7 @@ library(tidyverse)
 
 # Read in the car sales data
 # Make sure the data file is in your lab_0/data/ folder
-car_data <- read_csv("data/car_sales_data.csv")
+car_data <- read_csv("C:/Users/arzoo/OneDrive - PennO365/Documents/GitHub/cpln-5920-sp26-student-portfolio-template/Labs/Lab _0/car_sales_data.csv")
 ```
 
 # Exercise 1: Getting to Know Your Data
@@ -46,7 +53,7 @@ Explore the structure of your data and answer these questions:
 
 ```{r explore-structure}
 # Use glimpse() to see the data structure
-
+glimpse(car_data)
 
 # Check the column names
 
@@ -55,16 +62,12 @@ Explore the structure of your data and answer these questions:
 head(car_data)
 ```
 
-**Questions to answer:**
-- How many rows and columns does the dataset have?
-- What types of variables do you see (numeric, character, etc.)?
-- Are there any column names that might cause problems? Why?
+**Questions to answer:** - How many rows and columns does the dataset
+have? - What types of variables do you see (numeric, character, etc.)? -
+Are there any column names that might cause problems? Why?
 
-**Your answers:**
-- Rows: [YOUR ANSWER]
-- Columns: [YOUR ANSWER]  
-- Variable types: [YOUR ANSWER]
-- Problematic names: [YOUR ANSWER]
+**Your answers:** - Rows: \[YOUR ANSWER\] - Columns: \[YOUR ANSWER\]\
+- Variable types: \[YOUR ANSWER\] - Problematic names: \[YOUR ANSWER\]
 
 ## 1.2 Tibble vs Data Frame
 
@@ -81,7 +84,7 @@ car_df
 
 **Question:** What differences do you notice in how they print?
 
-**Your answer:** [YOUR ANSWER]
+**Your answer:** \[YOUR ANSWER\]
 
 # Exercise 2: Basic Column Operations
 
@@ -91,13 +94,18 @@ Practice selecting different combinations of columns:
 
 ```{r column-selection}
 # Select just Model and Mileage columns
+car_df_1<- car_df %>% 
+  select(Mileage, Model)
 
 
 # Select Manufacturer, Price, and Fuel type
+car_df_2 <- car_df %>% 
+  select(Manufacturer, Price, `Fuel type`)
 
 
 # Challenge: Select all columns EXCEPT Engine Size
-
+car_df_3 <- car_df %>% 
+  select (-`Engine size`)
 ```
 
 ## 2.2 Renaming Columns
@@ -106,15 +114,17 @@ Let's fix a problematic column name:
 
 ```{r rename-columns}
 # Rename 'Year of manufacture' to year
-
+car_df <- car_df %>% 
+  rename( Year = `Year of manufacture`, Size = `Engine size` , Fuel = `Fuel type`)
 
 # Check that it worked
 names(car_data)
 ```
 
-**Question:** Why did we need backticks around `Year of manufacture` but not around `year`?
+**Question:** Why did we need backticks around `Year of manufacture` but
+not around `year`?
 
-**Your answer:** [YOUR ANSWER]
+**Your answer:** \[YOUR ANSWER\]
 
 # Exercise 3: Creating New Columns
 
@@ -122,12 +132,16 @@ names(car_data)
 
 ```{r calculate-age}
 # Create an 'age' column (2025 minus year of manufacture)
-
+car_df<- car_df %>% 
+  mutate( age = (2025- Year))
 
 # Create a mileage_per_year column  
+car_df <- car_df %>% 
+  mutate ( mileage_per_year = Mileage/ Year)
 
 
 # Look at your new columns
+names(car_df)
 #select(car_data, Model, year, age, Mileage, mileage_per_year)
 ```
 
@@ -136,8 +150,15 @@ names(car_data)
 ```{r categorize-cars}
 # Create a price_category column where if price is < 15000, its is coded as budget, between 15000 and 30000 is midrange and greater than 30000 is mid-range (use case_when)
 
+car_df <- car_df %>% 
+  mutate( price_category = case_when( Price < 15000 ~ "budget",
+      Price >= 15000 & Price < 30000 ~ "midrange",
+      Price >= 30000 ~ "mid-range"))
+
 
 # Check your categories select the new column and show it
+car_df %>% 
+  select( Model, Price, price_category)
 ```
 
 # Exercise 4: Filtering Practice
@@ -146,12 +167,16 @@ names(car_data)
 
 ```{r basic-filtering}
 # Find all Toyota cars
-
+toyota_car <- car_df %>% 
+  filter( Manufacturer == "Toyota")
 
 # Find cars with mileage less than 30,000
-
+low_mileage <- car_df %>% 
+  filter ( Mileage < 30000)
 
 # Find luxury cars (from price category) with low mileage
+high_value_cars <- car_df %>% 
+  filter( Mileage <30000 & price_category == "mid-range")
 
 ```
 
@@ -159,18 +184,23 @@ names(car_data)
 
 ```{r multiple-conditions}
 # Find cars that are EITHER Honda OR Nissan
-
+car_df %>% 
+  filter( Manufacturer == "Honda" | Manufacturer == "Nissan")
 
 # Find cars with price between $20,000 and $35,000
-
+car_df %>% 
+  filter ( Price >= 20000 & Price <= 35000)
 
 # Find diesel cars less than 10 years old
+
+car_df %>% 
+  filter( Fuel == "Diesel" & age < 10)
 
 ```
 
 **Question:** How many diesel cars are less than 10 years old?
 
-**Your answer:** [YOUR ANSWER]
+**Your answer:** \[YOUR ANSWER\]
 
 # Exercise 5: Grouping and Summarizing
 
@@ -185,10 +215,17 @@ avg_price_by_brand <- car_data %>%
 avg_price_by_brand
 
 # Calculate average mileage by fuel type
+avg_mileage_by_fuel <- car_df %>% 
+  group_by (Fuel) %>% 
+  summarise( avg_mileage = mean(Mileage , na.rm = T))
+
+avg_mileage_by_fuel
 
 
 # Count cars by manufacturer
-
+no_cars_manufacturer <- car_df %>% 
+ count(Manufacturer, name = "Cars")
+no_cars_manufacturer
 ```
 
 ## 5.2 Categorical Summaries
@@ -196,16 +233,20 @@ avg_price_by_brand
 ```{r categorical-summaries}
 # Frequency table for price categories
 
-```
+car_df %>%
+  count(price_category , name = "Cars") %>%
+  mutate(Percentage = Cars / sum( Cars) * 100)
 
+
+```
 
 # Submission Notes
 
-**To submit this lab:**
-1. Make sure your code runs without errors
-2. Fill in all the "[YOUR ANSWER]" sections and complete all of the empty code! 
-3. Save this file in your portfolio's `lab_0/` folder
-4. Commit and push to GitHub
-5. Check that it appears on your GitHub Pages portfolio site
+**To submit this lab:** 1. Make sure your code runs without errors 2.
+Fill in all the "\[YOUR ANSWER\]" sections and complete all of the empty
+code! 3. Save this file in your portfolio's `lab_0/` folder 4. Commit
+and push to GitHub 5. Check that it appears on your GitHub Pages
+portfolio site
 
-**Questions?** Post on the canvas discussion board or come to office hours!
+**Questions?** Post on the canvas discussion board or come to office
+hours!

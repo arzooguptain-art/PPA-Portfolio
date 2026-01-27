@@ -93,10 +93,11 @@ car_df
 
 **Question:** What differences do you notice in how they print?
 
-**Answer:** Here they look the same but from the other example data
-frames often present all the information and are not easy to read, where
-as the tibbles shows only a few rows at a time in a scroll-able format.
-The Tibble format is easier and cleaner to perceive visually
+**Answer:** The Data Frame presents all the information and makes it
+hard to read, where as the tibbles shows only ten rows at a time in a
+scroll-able format. The Tibble format is easier and cleaner to perceive
+visually and doesn't take up space on the document and make it extremely
+long.
 
 # Exercise 2: Basic Column Operations
 

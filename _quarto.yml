@@ -9,10 +9,18 @@ website:
     left:
       - href: index.qmd
         text: Home
+<<<<<<< HEAD
       - href: labs/index.qmd
         text: Labs
       
 
+=======
+      - text: Labs
+        menu: 
+          - href: Labs/Lab_0/lab0_template.html
+            text: Lab 0
+       
+>>>>>>> c688237fc215bac6a975671252c8b5ccad600000
 format:
   html:
     theme: cosmo

@@ -1,7 +1,7 @@
 ---
 title: "Lab 0: Getting Started with dplyr"
 subtitle: "Your First Data Analysis"
-author: "Your Name Here"
+author: "Arzoo"
 date: today
 format: 
   html:
@@ -19,9 +19,8 @@ editor:
 
 # Overview
 
-Welcome to your first lab! In this (not graded) assignment, you'll
-practice the fundamental dplyr operations I overviewed in class using
-car sales data. This lab will help you get comfortable with:
+This is the first lab, which is an exploratory exercise that introduced
+me to
 
 -   Basic data exploration
 -   Column selection and manipulation\
@@ -29,10 +28,8 @@ car sales data. This lab will help you get comfortable with:
 -   Filtering data
 -   Grouping and summarizing
 
-**Instructions:** Copy this template into your portfolio repository
-under a `lab_0/` folder, then complete each section with your code and
-answers. You will write the code under the comment section in each
-chunk. Be sure to also copy the data folder into your `lab_0` folder.
+This also helped me get comfortable with building the github website and
+how to put together the folder structure.
 
 # Setup
 
@@ -66,12 +63,13 @@ head(car_data)
 have? - What types of variables do you see (numeric, character, etc.)? -
 Are there any column names that might cause problems? Why?
 
-**Your answers:** -
+**Answers:** -
 
 1.  Rows: 50,000
 
 2.  Columns: 7\
-    - Variable types:
+
+    -   Variable types:
 
     Character and Numeric
 
@@ -95,7 +93,7 @@ car_df
 
 **Question:** What differences do you notice in how they print?
 
-**Your answer:** Here they look the same but from the other example data
+**Answer:** Here they look the same but from the other example data
 frames often present all the information and are not easy to read, where
 as the tibbles shows only a few rows at a time in a scroll-able format.
 The Tibble format is easier and cleaner to perceive visually
@@ -108,17 +106,17 @@ Practice selecting different combinations of columns:
 
 ```{r column-selection}
 # Select just Model and Mileage columns
-car_df_1<- car_data %>% 
+car_data %>% 
   select(Mileage, Model)
 
 
 # Select Manufacturer, Price, and Fuel type
-car_df_2 <- car_data %>% 
+car_data %>% 
   select(Manufacturer, Price, `Fuel type`)
 
 
 # Challenge: Select all columns EXCEPT Engine Size
-car_df_3 <- car_data %>% 
+ car_data %>% 
   select (-`Engine size`)
 
 ```
@@ -141,8 +139,8 @@ names(car_data)
 **Question:** Why did we need backticks around `Year of manufacture` but
 not around `year`?
 
-**Your answer:** The backticks help R read the space in the column names
-and makes it analysable whereas Year has no spaces sin the name of the
+**Answer:** The backticks help R read the space in the column names and
+makes it analysable whereas Year has no spaces sin the name of the
 column.
 
 # Exercise 3: Creating New Columns
@@ -234,7 +232,7 @@ car_data %>%
 
 **Question:** How many diesel cars are less than 10 years old?
 
-**Your answer:** 2040 Cars
+**Answer:** 2040 Cars
 
 # Exercise 5: Grouping and Summarizing
 
@@ -274,14 +272,3 @@ car_data %>%
 
 
 ```
-
-# Submission Notes
-
-**To submit this lab:** 1. Make sure your code runs without errors 2.
-Fill in all the "\[YOUR ANSWER\]" sections and complete all of the empty
-code! 3. Save this file in your portfolio's `lab_0/` folder 4. Commit
-and push to GitHub 5. Check that it appears on your GitHub Pages
-portfolio site
-
-**Questions?** Post on the canvas discussion board or come to office
-hours!

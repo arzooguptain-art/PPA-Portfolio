@@ -1,0 +1,752 @@
+---
+title: "Lab 1: Census Data Quality for Policy Decisions"
+subtitle: "Evaluating Data Reliability for Algorithmic Decision-Making"
+author: "Arzoo"
+date: today
+format: 
+  html:
+    code-fold: false
+    toc: true
+    toc-location: left
+    theme: cosmo
+execute:
+  warning: false
+  message: false
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Assignment Overview
+
+## Scenario
+
+You are a data analyst for the **\[Your State\] Department of Human
+Services**. The department is considering implementing an algorithmic
+system to identify communities that should receive priority for social
+service funding and outreach programs. Your supervisor has asked you to
+evaluate the quality and reliability of available census data to inform
+this decision.
+
+Drawing on our Week 2 discussion of algorithmic bias, you need to assess
+not just what the data shows, but how reliable it is and what
+communities might be affected by data quality issues.
+
+## Learning Objectives
+
+-   Apply dplyr functions to real census data for policy analysis
+-   Evaluate data quality using margins of error
+-   Connect technical analysis to algorithmic decision-making
+-   Identify potential equity implications of data reliability issues
+-   Create professional documentation for policy stakeholders
+
+## Submission Instructions
+
+**Submit by posting your updated portfolio link on Canvas.** Your
+assignment should be accessible at `your-portfolio-url/labs/lab_1/`
+
+Make sure to update your `_quarto.yml` navigation to include this
+assignment under an "Labs" menu.
+
+# Part 1: Portfolio Integration
+
+Create this assignment in your portfolio repository under an
+`labs/lab_1/` folder structure. Update your navigation menu to include:
+
+```         
+- text: Assignments
+  menu:
+    - href: labs/lab_1/your_file_name.qmd
+      text: "Lab 1: Census Data Exploration"
+```
+
+If there is a special character like a colon, you need use double quote
+mark so that the quarto can identify this as text
+
+# Setup
+
+```{r setup}
+# Load required packages (hint: you need tidycensus, tidyverse, and knitr)
+library(tidyverse)
+library(tidycensus)
+library(scales)
+library(RColorBrewer)
+library(knitr)
+
+# Set your Census API key
+
+
+# Choose your state for analysis - assign it to a variable called my_state
+my_state <- "LA"
+```
+
+**State Selection:** I have chosen **Louisiana** for this analysis
+because:
+
+Louisiana's rural parishes show the highest income estimate uncertainty,
+with low-confidence counties concentrated in areas with smaller, more
+dispersed populations. These unreliable income estimates pose a direct
+risk to algorithmic systems — parishes with high MOE could be
+systematically misclassified for funding priority, meaning communities
+with genuine need may be overlooked or incorrectly ranked simply due to
+data limitations rather than actual economic conditions.
+
+# Part 2: County-Level Resource Assessment
+
+## 2.1 Data Retrieval
+
+**Your Task:** Use `get_acs()` to retrieve county-level data for your
+chosen state.
+
+**Requirements:** - Geography: county level - Variables: median
+household income (B19013_001) and total population (B01003_001)\
+- Year: 2022 - Survey: acs5 - Output format: wide
+
+**Hint:** Remember to give your variables descriptive names using the
+`variables = c(name = "code")` syntax.
+
+```{r county-data}
+# Write your get_acs() code here
+
+county_level <- get_acs( state = my_state, geography = "county", 
+                     variables = c( med_hh_inc = "B19013_001", tot_pop = "B01003_001"), year = 2022, survey = "acs5", output = "wide")
+
+
+# Clean the county names to remove state name and "County" 
+county_level <- county_level %>% 
+  mutate(county = str_remove(NAME, ", Louisiana"), 
+county = str_remove( county, " Parish") )
+
+
+
+# Hint: use mutate() with str_remove()
+
+# Display the first few rows
+county_level
+```
+
+## 2.2 Data Quality Assessment
+
+**Your Task:** Calculate margin of error percentages and create
+reliability categories.
+
+**Requirements:** - Calculate MOE percentage: (margin of error /
+estimate) \* 100 - Create reliability categories: - High Confidence: MOE
+\< 5% - Moderate Confidence: MOE 5-10%\
+- Low Confidence: MOE \> 10% - Create a flag for unreliable estimates
+(MOE \> 10%)
+
+**Hint:** Use `mutate()` with `case_when()` for the categories.
+
+```{r income-reliability}
+# Calculate MOE percentage and reliability categories using mutate()
+county_level <- county_level %>% 
+  mutate ( MOE_perc = (med_hh_incM/med_hh_incE)*100) %>% 
+  mutate( confidence_level = case_when(
+    MOE_perc < 5 ~ "High Confidence", 
+    MOE_perc >=5 & MOE_perc <10 ~ "Moderate Confidence", 
+    MOE_perc > 10 ~ "Low Confidence"
+    
+  ))
+# Create a summary showing count of counties in each reliability category
+
+county_level %>% 
+  count(confidence_level, name = "county") %>% 
+  mutate( share = county / sum(county) * 100)
+
+# Hint: use count() and mutate() to add percentages
+```
+
+## 2.3 High Uncertainty Counties
+
+**Your Task:** Identify the 5 counties with the highest MOE percentages.
+
+**Requirements:** - Sort by MOE percentage (highest first) - Select the
+top 5 counties - Display: county name, median income, margin of error,
+MOE percentage, reliability category - Format as a professional table
+using `kable()`
+
+**Hint:** Use `arrange()`, `slice()`, and `select()` functions.
+
+```{r high-uncertainty}
+
+library(knitr)
+library(kableExtra)
+# Create table of top 5 counties by MOE percentage
+reliability_table <- county_level %>% 
+  arrange( desc(MOE_perc)) %>% 
+  slice(1:5) %>% 
+  select( County = county, 
+          Median_Income= med_hh_incE,
+          MOE = med_hh_incM, 
+          MOE_perc, 
+          Reliability = confidence_level)
+reliability_table
+
+# Format as table with kable() - include appropriate column names and caption
+reliability <- county_level %>%
+  arrange(desc(MOE_perc)) %>%
+  slice(1:5) %>%
+  select(
+    county,
+    med_hh_incE,
+    med_hh_incM,
+    MOE_perc,
+    confidence_level
+  ) %>%
+  kable(
+    col.names = c(
+      "County",
+      "Median Household Income",
+      "Margin of Error",
+      "MOE (%)",
+      "Reliability"
+    ),
+    digits = 2,
+    caption = "Top 5 Counties with the Highest Median Household Income MOE Percentages",
+    format.args = list(big.mark = ",")
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = FALSE
+  ) %>%
+  footnote(
+    general = c(
+      "Margin of Error (MOE) expressed as a percentage of the estimate.",
+      "🟢 High Confidence: MOE < 5%",
+      "🟡 Moderate Confidence: MOE 5–10%",
+      "🔴 Low Confidence: MOE ≥ 10%",
+      "Source: American Community Survey 5-Year Estimates"
+    ),
+    general_title = "Notes:"
+  )
+reliability
+
+```
+
+**Data Quality Commentary:**
+
+All five parishes with the highest income uncertainty fall into the Low
+Confidence category, with Cameron Parish showing the most extreme MOE at
+24.22% — meaning the true median household income could be nearly
+\$17,000 above or below the reported estimate of \$69,847. An
+algorithmic system relying on this income data would be most likely to
+misclassify Cameron, Red River, Madison, East Carroll, and St. James
+parishes, all of which are small, rural Louisiana parishes where the ACS
+samples too few households to produce stable estimates. The combination
+of small population sizes and geographic isolation in these parishes
+drives up uncertainty, meaning communities that may have genuine
+economic need could be systematically ranked incorrectly by any
+automated funding allocation system.
+
+# Part 3: Neighborhood-Level Analysis
+
+## 3.1 Focus Area Selection
+
+**Your Task:** Select 2-3 counties from your reliability analysis for
+detailed tract-level study.
+
+**Strategy:** Choose counties that represent different reliability
+levels (e.g., 1 high confidence, 1 moderate, 1 low confidence) to
+compare how data quality varies.
+
+```{r select-counties}
+# Use filter() to select 2-3 counties from your county_reliability data
+selected_counties <- county_level %>%
+  filter(confidence_level %in% c(
+    "High Confidence",
+    "Moderate Confidence",
+    "Low Confidence"
+  )) %>%
+  group_by(confidence_level) %>%
+  slice_max(MOE_perc, n = 1, with_ties = FALSE) %>%
+  ungroup()
+selected_counties
+# Store the selected counties in a variable called selected_counties
+
+# Display the selected counties with their key characteristics
+selected_counties %>% 
+    select(
+      county,
+      med_hh_incE,
+      MOE_perc, 
+      confidence_level
+    ) %>% 
+  kable(
+    col.names = c(
+      "County",
+      "Median Household Income",
+      "MOE (%)",
+      "Reliability"
+    ),
+    digits = 2,
+    caption = "Selected Counties to Run a tract level analysis",
+    format.args = list(big.mark = ",")
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = FALSE
+  ) %>%
+  footnote(
+    general = c(
+      "Margin of Error (MOE) expressed as a percentage of the estimate.",
+      "🟢 High Confidence: MOE < 5%",
+      "🟡 Moderate Confidence: MOE 5–10%",
+      "🔴 Low Confidence: MOE ≥ 10%",
+      "Source: American Community Survey 5-Year Estimates"
+    ),
+    general_title = "Notes:"
+  )
+
+# Show: county name, median income, MOE percentage, reliability category
+```
+
+**Comment on the output:**
+
+The three selected parishes — Cameron, Jefferson Davis, and Natchitoches
+— represent distinct reliability tiers, allowing for a meaningful
+comparison of how data quality varies across Louisiana's rural
+landscape. Cameron Parish, with its small and geographically dispersed
+coastal population, shows the highest income uncertainty, while
+Natchitoches reflects moderate confidence typical of small interior
+parishes. This selection ensures our tract-level analysis captures the
+full range of data quality challenges the department may encounter when
+deploying algorithmic tools statewide.
+
+## 3.2 Tract-Level Demographics
+
+**Your Task:** Get demographic data for census tracts in your selected
+counties.
+
+**Requirements:** - Geography: tract level - Variables: white alone
+(B03002_003), Black/African American (B03002_004), Hispanic/Latino
+(B03002_012), total population (B03002_001) - Use the same state and
+year as before - Output format: wide - **Challenge:** You'll need county
+codes, not names. Look at the GEOID patterns in your county data for
+hints.
+
+```{r tract-demographics}
+# Define your race/ethnicity variables with descriptive names
+tract_level <- get_acs(
+  state = my_state, 
+  geography = "tract", 
+  county = c("069", "023", "053"),
+  variables = c(
+    med_hh_inc = "B19013_001", 
+    tot_pop = "B03002_001", 
+    white = "B03002_003", 
+    black = "B03002_004", 
+    hisp = "B03002_012"
+  ), 
+  year = 2022, 
+  survey = "acs5", 
+  output = "wide"
+)
+
+# Add readable tract and county name columns using str_extract() or similar
+tract_level_clean <- tract_level %>%
+  mutate(
+    tract_number = str_extract(NAME, "\\d+\\.?\\d*"),
+    county_name = str_extract(NAME, "(?<=; )[^;]+(?= Parish)")
+  )
+# Use get_acs() to retrieve tract-level data
+# Hint: You may need to specify county codes in the county parameter
+
+
+# Calculate percentage of each group using mutate()
+# Create percentages for white, Black, and Hispanic populations
+
+tract_level_clean <- tract_level_clean %>% 
+  mutate( perc_white = ((whiteE/ tot_popE)*100), 
+          perc_black = ((blackE/tot_popE)*100), 
+          perc_hisp = ((hispE/tot_popE)*100))
+
+
+
+
+```
+
+## 3.3 Demographic Analysis
+
+**Your Task:** Analyze the demographic patterns in your selected areas.
+
+```{r demographic-analysis}
+# Find the tract with the highest percentage of Hispanic/Latino residents
+# Hint: use arrange() and slice() to get the top tract
+highest_hisp_tract <- tract_level_clean %>%
+  mutate(perc_hisp = (hispE / tot_popE) * 100) %>%
+  arrange(desc(perc_hisp)) %>%
+  slice(1) %>%
+  select(tract_number, county_name, tot_popE, hispE, perc_hisp)
+highest_hisp_tract
+
+# Calculate average demographics by county using group_by() and summarize()
+# Show: number of tracts, average percentage for each racial/ethnic group
+county_summary <- tract_level_clean %>%
+  mutate(
+    perc_white = (whiteE / tot_popE) * 100,
+    perc_black = (blackE / tot_popE) * 100,
+    perc_hisp = (hispE / tot_popE) * 100
+  ) %>%
+  group_by(county_name) %>%
+  summarize(
+    num_tracts = n(),
+    avg_perc_white = mean(perc_white, na.rm = TRUE),
+    avg_perc_black = mean(perc_black, na.rm = TRUE),
+    avg_perc_hisp = mean(perc_hisp, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+county_summary
+# Create a nicely formatted table of your results using kable()
+
+county_summary %>%
+  kable(
+    col.names = c(
+      "Parish",
+      "Number of Tracts",
+      "Avg % White",
+      "Avg % Black",
+      "Avg % Hispanic/Latino"
+    ),
+    digits = 2,
+    caption = "Average Demographics by Parish",
+    format.args = list(big.mark = ",")
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = FALSE
+  ) %>%
+  footnote(
+    general = c(
+      "Percentages represent the average across all census tracts within each parish.",
+      "Source: American Community Survey 5-Year Estimates (2022)"
+    ),
+    general_title = "Notes:"
+  )
+```
+
+# Part 4: Comprehensive Data Quality Evaluation
+
+## 4.1 MOE Analysis for Demographic Variables
+
+**Your Task:** Examine margins of error for demographic variables to see
+if some communities have less reliable data.
+
+**Requirements:** - Calculate MOE percentages for each demographic
+variable - Flag tracts where any demographic variable has MOE \> 15% -
+Create summary statistics
+
+```{r demographic-moe}
+# Calculate MOE percentages for white, Black, and Hispanic variables
+# Hint: use the same formula as before (margin/estimate * 100)
+tract_level_clean <- tract_level_clean %>% 
+  mutate ( MOE_white = ((whiteM/whiteE)*100), 
+           MOE_black = (( blackM/ blackE) *100),
+           MOE_hisp = ((hispM/hispE)*100))
+
+# Create a flag for tracts with high MOE on any demographic variable
+tract_level_clean <- tract_level_clean %>%
+  mutate(
+    high_MOE_flag = ifelse(
+      replace_na(MOE_white > 15, FALSE) |
+      replace_na(MOE_black > 15, FALSE) |
+      replace_na(MOE_hisp > 15, FALSE),
+      "🔴 High MOE (>15%)",
+      "Acceptable MOE"
+    )
+  )
+# Use logical operators (| for OR) in an ifelse() statement
+
+# Create summary statistics showing how many tracts have data quality issues
+tract_level_clean %>%
+  group_by(county_name, high_MOE_flag) %>%
+  summarize(num_tracts = n(), .groups = "drop") %>%
+  kable(
+    col.names = c("Parish", "Data Quality", "Number of Tracts"),
+    digits = 2,
+    caption = "Data Quality Summary by Parish",
+    format.args = list(big.mark = ",")
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = FALSE
+  ) %>%
+  footnote(
+    general = c(
+      "A tract is flagged if any demographic variable (White, Black, or Hispanic) has MOE > 15%.",
+      "🔴 High MOE (>15%): Estimates may be unreliable.",
+      "Acceptable MOE: Estimates are sufficiently reliable for analysis.",
+      "Source: American Community Survey 5-Year Estimates (2022)"
+    ),
+    general_title = "Notes:"
+  )
+```
+
+## 4.2 Pattern Analysis
+
+**Your Task:** Investigate whether data quality problems are randomly
+distributed or concentrated in certain types of communities.
+
+```{r pattern-analysis}
+# Group tracts by whether they have high MOE issues
+moe_comparison <- tract_level_clean %>%
+  group_by(county_name) %>%
+  summarize(
+    num_tracts          = n(),
+    avg_population      = mean(tot_popE,  na.rm = TRUE),
+    avg_perc_white       = mean(perc_white, na.rm = TRUE),
+    avg_perc_black       = mean(perc_black, na.rm = TRUE),
+    avg_perc_hisp        = mean(perc_hisp,  na.rm = TRUE),
+    perc_unreliable_white = mean(replace_na(MOE_white > 15, FALSE)) * 100,
+    perc_unreliable_black = mean(replace_na(MOE_black > 15, FALSE)) * 100,
+    perc_unreliable_hisp  = mean(replace_na(MOE_hisp  > 15, FALSE)) * 100,
+    .groups = "drop"
+  )
+# Calculate average characteristics for each group:
+# - population size, demographic percentages
+
+# Use group_by() and summarize() to create this comparison
+
+
+
+# Create a professional table showing the patterns
+
+moe_comparison %>%
+  kable(
+    col.names = c(
+      "Parish",
+      "Tracts",
+      "Avg Population",
+      "Avg % White",
+      "Avg % Black",
+      "Avg % Hispanic",
+      "% Tracts Unreliable (White)",
+      "% Tracts Unreliable (Black)",
+      "% Tracts Unreliable (Hispanic)"
+    ),
+    digits = 2,
+    caption = "Demographic Estimates and Data Reliability by Parish",
+    format.args = list(big.mark = ",")
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = FALSE
+  ) %>%
+  footnote(
+    general = c(
+      "% Tracts Unreliable = share of tracts where MOE exceeds 15% of the estimate.",
+      "High unreliability for minority groups reflects small subgroup populations in these parishes.",
+      "🔴 Estimates with high MOE should be interpreted with caution.",
+      "Source: American Community Survey 5-Year Estimates (2022)"
+    ),
+    general_title = "Notes:"
+  )
+```
+
+**Pattern Analysis:**
+
+The analysis reveals that data quality problems are not randomly
+distributed — they are systematically concentrated among minority
+demographic groups across all three parishes. Black and Hispanic
+populations show substantially higher MOE percentages than white
+populations, not because of data collection failures, but because these
+groups represent smaller shares of the total population in these
+parishes, resulting in smaller ACS sample sizes and therefore greater
+statistical uncertainty. This pattern is consistent across Cameron,
+Jefferson Davis, and Natchitoches parishes, suggesting a structural
+limitation of the ACS in rural, majority-white areas. The practical
+implication is serious: an algorithm relying on demographic estimates
+for these communities would have the least reliable data precisely for
+the minority groups it may be intended to serve.
+
+# Part 5: Policy Recommendations
+
+## 5.1 Analysis Integration and Professional Summary
+
+**Your Task:** Write an executive summary that integrates findings from
+all four analyses.
+
+**Executive Summary Requirements:** 1. **Overall Pattern
+Identification**: What are the systematic patterns across all your
+analyses? 2. **Equity Assessment**: Which communities face the greatest
+risk of algorithmic bias based on your findings? 3. **Root Cause
+Analysis**: What underlying factors drive both data quality issues and
+bias risk? 4. **Strategic Recommendations**: What should the Department
+implement to address these systematic issues?
+
+**Executive Summary:**
+
+**Overall Pattern Identification:** Across all four analyses, a
+consistent pattern emerges — data reliability in Louisiana's rural
+parishes is inversely related to population size and demographic
+diversity. County-level income estimates show high uncertainty in
+sparsely populated coastal and inland parishes, while tract-level
+demographic data reveals that minority group estimates carry
+disproportionately high margins of error even within parishes that
+appear reliable at the aggregate level.
+
+**Equity Assessment:** Black and Hispanic residents across Cameron,
+Jefferson Davis, and Natchitoches parishes face the greatest risk of
+algorithmic harm. Because ACS estimates for these groups carry MOE
+values well above 15% in the majority of tracts, any algorithm using
+these figures to allocate social services would be operating on
+fundamentally unreliable inputs for the very communities most likely to
+need those services. This creates a feedback loop where data scarcity
+compounds existing inequity.
+
+**Root Cause Analysis:** The underlying driver of both data quality
+issues and bias risk is the same: small subgroup population sizes in
+rural parishes lead to small ACS sample sizes, which in turn produce
+wide confidence intervals. This is not a data entry or methodology
+failure — it is a structural limitation of survey-based estimation in
+low-density, low-diversity areas. Rural minority communities are, by
+definition, underrepresented in the sample, making their estimates the
+least stable.
+
+**Strategic Recommendations:** The Department of Human Services should
+implement a tiered approach to algorithmic decision-making that
+explicitly accounts for data reliability. High-confidence parishes can
+proceed with automated prioritization, while moderate-confidence
+parishes should require human review of algorithmic outputs before
+funding decisions are finalized. In low-confidence parishes, and for any
+tract where minority demographic estimates carry MOE above 15%, the
+department should suspend automated classification entirely and instead
+conduct targeted supplemental surveys or partner with local
+organizations to gather ground-truth data before making resource
+allocation decisions.
+
+## 6.3 Specific Recommendations
+
+**Your Task:** Create a decision framework for algorithm implementation.
+
+```{r recommendations-data}
+# Create a summary table using your county reliability data
+# Include: county name, median income, MOE percentage, reliability category
+
+# Add a new column with algorithm recommendations using case_when():
+# - High Confidence: "Safe for algorithmic decisions"
+# - Moderate Confidence: "Use with caution - monitor outcomes"  
+# - Low Confidence: "Requires manual review or additional data"
+
+# Format as a professional table with kable()
+
+county_level %>%
+  select(county, med_hh_incE, med_hh_incM, MOE_perc, confidence_level) %>%
+  mutate(
+    recommendation = case_when(
+      confidence_level == "High Confidence"     ~ "🟢 Safe for algorithmic decisions",
+      confidence_level == "Moderate Confidence" ~ "🟡 Use with caution - monitor outcomes",
+      confidence_level == "Low Confidence"      ~ "🔴 Requires manual review or additional data"
+    )
+  ) %>%
+  arrange(desc(MOE_perc)) %>%
+  kable(
+    col.names = c(
+      "Parish",
+      "Median Household Income",
+      "Margin of Error",
+      "MOE (%)",
+      "Reliability",
+      "Recommendation"
+    ),
+    digits = 2,
+    caption = "Algorithm Implementation Decision Framework by Parish",
+    format.args = list(big.mark = ",")
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = FALSE
+  ) %>%
+  footnote(
+    general = c(
+      "Recommendations based on Margin of Error (MOE) as a percentage of the estimate.",
+      "🟢 High Confidence (MOE < 5%): Estimates are reliable for automated decisions.",
+      "🟡 Moderate Confidence (MOE 5–10%): Use with human oversight and outcome monitoring.",
+      "🔴 Low Confidence (MOE > 10%): Data unreliability poses risk of algorithmic bias.",
+      "Source: American Community Survey 5-Year Estimates (2022)"
+    ),
+    general_title = "Notes:"
+  )
+```
+
+**Key Recommendations:**
+
+**Your Task:** Use your analysis results to provide specific guidance to
+the department.
+
+-   **Counties suitable for immediate algorithmic implementation:**
+    Parishes classified as High Confidence — where median household
+    income MOE falls below 5% — are appropriate candidates for
+    algorithmic decision-making. In these areas, the ACS estimates are
+    stable enough that automated prioritization is unlikely to produce
+    systematic misclassification. The department should still monitor
+    outcomes over time to detect any emergent disparities.
+
+-   **Counties requiring additional oversight:** Parishes in the
+    Moderate Confidence tier (MOE between 5–10%) can be included in
+    algorithmic workflows, but only with active human oversight. Program
+    officers should review algorithmic outputs for these parishes before
+    finalizing funding decisions, and outcome data should be tracked
+    quarterly to identify whether any communities are being consistently
+    under- or over-served relative to their actual need.
+
+-   **Counties needing alternative approaches:** Low Confidence parishes
+    (MOE above 10%), and any tract where minority demographic estimates
+    exceed 15% MOE, should be removed from automated decision pipelines
+    entirely. For these areas, the department should pursue one or more
+    of the following: targeted supplemental ACS surveys, partnerships
+    with local nonprofits and service providers to gather administrative
+    data, or manual needs assessments conducted by field staff with
+    community knowledge.
+
+    1.  Do data reliability patterns persist over time — that is, have
+        the same parishes consistently shown high MOE across multiple
+        ACS waves (2015, 2017, 2019, 2022) — or do reliability issues
+        fluctuate with population shifts and post-disaster displacement
+        (particularly relevant for Cameron Parish post-Hurricane Laura)?
+    2.  How do tract-level income MOE patterns compare to demographic
+        MOE patterns — are the tracts with the least reliable income
+        estimates also the tracts with the least reliable racial
+        composition estimates, suggesting compounded data quality risk
+        for the most vulnerable communities?
+    3.  Would switching from ACS 5-year estimates to administrative data
+        sources (SNAP enrollment, Medicaid claims, school lunch
+        eligibility) produce more reliable proxies for economic need in
+        low-confidence parishes, and how would that change which
+        communities are prioritized for services?
+
+# Technical Notes
+
+**Data Sources:** - U.S. Census Bureau, American Community Survey
+2018-2022 5-Year Estimates - Retrieved via tidycensus R package on
+\[date\]
+
+**Reproducibility:** - All analysis conducted in R version \[your
+version\] - Census API key required for replication - Complete code and
+documentation available at: \[your portfolio URL\]
+
+**Methodology Notes:** \[Describe any decisions you made about data
+processing, county selection, or analytical choices that might affect
+reproducibility\]
+
+**Limitations:** \[Note any limitations in your analysis - sample size
+issues, geographic scope, temporal factors, etc.\]
+
+------------------------------------------------------------------------
+
+## Submission Checklist
+
+Before submitting your portfolio link on Canvas:
+
+-   [ ] All code chunks run without errors
+-   [ ] All "\[Fill this in\]" prompts have been completed
+-   [ ] Tables are properly formatted and readable
+-   [ ] Executive summary addresses all four required components
+-   [ ] Portfolio navigation includes this assignment
+-   [ ] Census API key is properly set
+-   [ ] Document renders correctly to HTML
+
+**Remember:** Submit your portfolio URL on Canvas, not the file itself.
+Your assignment should be accessible at
+`your-portfolio-url/labs/lab_1/your_file_name.html`

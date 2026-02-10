@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Arzoo">
+<meta name="dcterms.date" content="2026-02-10">
+
+<title>Lab 1: Census Data Quality for Policy Decisions – Arzoo Gupta - MUSA 5080 Portfolio</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-e31584831b205ffbb2d98406f31c2a5b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../../site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="../../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+
+</head>
+
+<body class="floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Arzoo Gupta - MUSA 5080 Portfolio</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-labs" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Labs</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-labs">    
+        <li>
+    <a class="dropdown-item" href="../../Labs/Lab_0/lab0_template.html">
+ <span class="dropdown-text">Lab 0</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Labs/Lab_1/lab1_template.html">
+ <span class="dropdown-text">Lab 0: Census Data Quality for Policy Decisions</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#assignment-overview" id="toc-assignment-overview" class="nav-link active" data-scroll-target="#assignment-overview">Assignment Overview</a>
+  <ul class="collapse">
+  <li><a href="#scenario" id="toc-scenario" class="nav-link" data-scroll-target="#scenario">Scenario</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#submission-instructions" id="toc-submission-instructions" class="nav-link" data-scroll-target="#submission-instructions">Submission Instructions</a></li>
+  </ul></li>
+  <li><a href="#part-1-portfolio-integration" id="toc-part-1-portfolio-integration" class="nav-link" data-scroll-target="#part-1-portfolio-integration">Part 1: Portfolio Integration</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#part-2-county-level-resource-assessment" id="toc-part-2-county-level-resource-assessment" class="nav-link" data-scroll-target="#part-2-county-level-resource-assessment">Part 2: County-Level Resource Assessment</a>
+  <ul class="collapse">
+  <li><a href="#data-retrieval" id="toc-data-retrieval" class="nav-link" data-scroll-target="#data-retrieval">2.1 Data Retrieval</a></li>
+  <li><a href="#data-quality-assessment" id="toc-data-quality-assessment" class="nav-link" data-scroll-target="#data-quality-assessment">2.2 Data Quality Assessment</a></li>
+  <li><a href="#high-uncertainty-counties" id="toc-high-uncertainty-counties" class="nav-link" data-scroll-target="#high-uncertainty-counties">2.3 High Uncertainty Counties</a></li>
+  </ul></li>
+  <li><a href="#part-3-neighborhood-level-analysis" id="toc-part-3-neighborhood-level-analysis" class="nav-link" data-scroll-target="#part-3-neighborhood-level-analysis">Part 3: Neighborhood-Level Analysis</a>
+  <ul class="collapse">
+  <li><a href="#focus-area-selection" id="toc-focus-area-selection" class="nav-link" data-scroll-target="#focus-area-selection">3.1 Focus Area Selection</a></li>
+  <li><a href="#tract-level-demographics" id="toc-tract-level-demographics" class="nav-link" data-scroll-target="#tract-level-demographics">3.2 Tract-Level Demographics</a></li>
+  <li><a href="#demographic-analysis" id="toc-demographic-analysis" class="nav-link" data-scroll-target="#demographic-analysis">3.3 Demographic Analysis</a></li>
+  </ul></li>
+  <li><a href="#part-4-comprehensive-data-quality-evaluation" id="toc-part-4-comprehensive-data-quality-evaluation" class="nav-link" data-scroll-target="#part-4-comprehensive-data-quality-evaluation">Part 4: Comprehensive Data Quality Evaluation</a>
+  <ul class="collapse">
+  <li><a href="#moe-analysis-for-demographic-variables" id="toc-moe-analysis-for-demographic-variables" class="nav-link" data-scroll-target="#moe-analysis-for-demographic-variables">4.1 MOE Analysis for Demographic Variables</a></li>
+  <li><a href="#pattern-analysis" id="toc-pattern-analysis" class="nav-link" data-scroll-target="#pattern-analysis">4.2 Pattern Analysis</a></li>
+  </ul></li>
+  <li><a href="#part-5-policy-recommendations" id="toc-part-5-policy-recommendations" class="nav-link" data-scroll-target="#part-5-policy-recommendations">Part 5: Policy Recommendations</a>
+  <ul class="collapse">
+  <li><a href="#analysis-integration-and-professional-summary" id="toc-analysis-integration-and-professional-summary" class="nav-link" data-scroll-target="#analysis-integration-and-professional-summary">5.1 Analysis Integration and Professional Summary</a></li>
+  <li><a href="#specific-recommendations" id="toc-specific-recommendations" class="nav-link" data-scroll-target="#specific-recommendations">6.3 Specific Recommendations</a></li>
+  </ul></li>
+  <li><a href="#technical-notes" id="toc-technical-notes" class="nav-link" data-scroll-target="#technical-notes">Technical Notes</a>
+  <ul class="collapse">
+  <li><a href="#submission-checklist" id="toc-submission-checklist" class="nav-link" data-scroll-target="#submission-checklist">Submission Checklist</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Lab 1: Census Data Quality for Policy Decisions</h1>
+<p class="subtitle lead">Evaluating Data Reliability for Algorithmic Decision-Making</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Arzoo </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 10, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="assignment-overview" class="level1">
+<h1>Assignment Overview</h1>
+<section id="scenario" class="level2">
+<h2 class="anchored" data-anchor-id="scenario">Scenario</h2>
+<p>You are a data analyst for the <strong>[Your State] Department of Human Services</strong>. The department is considering implementing an algorithmic system to identify communities that should receive priority for social service funding and outreach programs. Your supervisor has asked you to evaluate the quality and reliability of available census data to inform this decision.</p>
+<p>Drawing on our Week 2 discussion of algorithmic bias, you need to assess not just what the data shows, but how reliable it is and what communities might be affected by data quality issues.</p>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<ul>
+<li>Apply dplyr functions to real census data for policy analysis</li>
+<li>Evaluate data quality using margins of error</li>
+<li>Connect technical analysis to algorithmic decision-making</li>
+<li>Identify potential equity implications of data reliability issues</li>
+<li>Create professional documentation for policy stakeholders</li>
+</ul>
+</section>
+<section id="submission-instructions" class="level2">
+<h2 class="anchored" data-anchor-id="submission-instructions">Submission Instructions</h2>
+<p><strong>Submit by posting your updated portfolio link on Canvas.</strong> Your assignment should be accessible at <code>your-portfolio-url/labs/lab_1/</code></p>
+<p>Make sure to update your <code>_quarto.yml</code> navigation to include this assignment under an “Labs” menu.</p>
+</section>
+</section>
+<section id="part-1-portfolio-integration" class="level1">
+<h1>Part 1: Portfolio Integration</h1>
+<p>Create this assignment in your portfolio repository under an <code>labs/lab_1/</code> folder structure. Update your navigation menu to include:</p>
+<pre><code>- text: Assignments
+  menu:
+    - href: labs/lab_1/your_file_name.qmd
+      text: "Lab 1: Census Data Exploration"</code></pre>
+<p>If there is a special character like a colon, you need use double quote mark so that the quarto can identify this as text</p>
+</section>
+<section id="setup" class="level1">
+<h1>Setup</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required packages (hint: you need tidycensus, tidyverse, and knitr)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidycensus)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Set your Census API key</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose your state for analysis - assign it to a variable called my_state</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>my_state <span class="ot">&lt;-</span> <span class="st">"LA"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>State Selection:</strong> I have chosen <strong>Louisiana</strong> for this analysis because:</p>
+<p>Louisiana’s rural parishes show the highest income estimate uncertainty, with low-confidence counties concentrated in areas with smaller, more dispersed populations. These unreliable income estimates pose a direct risk to algorithmic systems — parishes with high MOE could be systematically misclassified for funding priority, meaning communities with genuine need may be overlooked or incorrectly ranked simply due to data limitations rather than actual economic conditions.</p>
+</section>
+<section id="part-2-county-level-resource-assessment" class="level1">
+<h1>Part 2: County-Level Resource Assessment</h1>
+<section id="data-retrieval" class="level2">
+<h2 class="anchored" data-anchor-id="data-retrieval">2.1 Data Retrieval</h2>
+<p><strong>Your Task:</strong> Use <code>get_acs()</code> to retrieve county-level data for your chosen state.</p>
+<p><strong>Requirements:</strong> - Geography: county level - Variables: median household income (B19013_001) and total population (B01003_001)<br>
+- Year: 2022 - Survey: acs5 - Output format: wide</p>
+<p><strong>Hint:</strong> Remember to give your variables descriptive names using the <code>variables = c(name = "code")</code> syntax.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Write your get_acs() code here</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>county_level <span class="ot">&lt;-</span> <span class="fu">get_acs</span>( <span class="at">state =</span> my_state, <span class="at">geography =</span> <span class="st">"county"</span>, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">variables =</span> <span class="fu">c</span>( <span class="at">med_hh_inc =</span> <span class="st">"B19013_001"</span>, <span class="at">tot_pop =</span> <span class="st">"B01003_001"</span>), <span class="at">year =</span> <span class="dv">2022</span>, <span class="at">survey =</span> <span class="st">"acs5"</span>, <span class="at">output =</span> <span class="st">"wide"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean the county names to remove state name and "County" </span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>county_level <span class="ot">&lt;-</span> county_level <span class="sc">%&gt;%</span> </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">county =</span> <span class="fu">str_remove</span>(NAME, <span class="st">", Louisiana"</span>), </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">county =</span> <span class="fu">str_remove</span>( county, <span class="st">" Parish"</span>) )</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Hint: use mutate() with str_remove()</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first few rows</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>county_level</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 64 × 7
+   GEOID NAME                   med_hh_incE med_hh_incM tot_popE tot_popM county
+   &lt;chr&gt; &lt;chr&gt;                        &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt; 
+ 1 22001 Acadia Parish, Louisi…       44977        2841    57674       NA Acadia
+ 2 22003 Allen Parish, Louisia…       52755        6411    22798       NA Allen 
+ 3 22005 Ascension Parish, Lou…       93800        3514   126973       NA Ascen…
+ 4 22007 Assumption Parish, Lo…       47023        3781    21067       NA Assum…
+ 5 22009 Avoyelles Parish, Lou…       38696        5175    39529       NA Avoye…
+ 6 22011 Beauregard Parish, Lo…       68525        6225    36553       NA Beaur…
+ 7 22013 Bienville Parish, Lou…       34268        3054    12958       NA Bienv…
+ 8 22015 Bossier Parish, Louis…       64598        3122   128877       NA Bossi…
+ 9 22017 Caddo Parish, Louisia…       47572        2032   236259       NA Caddo 
+10 22019 Calcasieu Parish, Lou…       64370        3249   210770       NA Calca…
+# ℹ 54 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="data-quality-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="data-quality-assessment">2.2 Data Quality Assessment</h2>
+<p><strong>Your Task:</strong> Calculate margin of error percentages and create reliability categories.</p>
+<p><strong>Requirements:</strong> - Calculate MOE percentage: (margin of error / estimate) * 100 - Create reliability categories: - High Confidence: MOE &lt; 5% - Moderate Confidence: MOE 5-10%<br>
+- Low Confidence: MOE &gt; 10% - Create a flag for unreliable estimates (MOE &gt; 10%)</p>
+<p><strong>Hint:</strong> Use <code>mutate()</code> with <code>case_when()</code> for the categories.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate MOE percentage and reliability categories using mutate()</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>county_level <span class="ot">&lt;-</span> county_level <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> ( <span class="at">MOE_perc =</span> (med_hh_incM<span class="sc">/</span>med_hh_incE)<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">confidence_level =</span> <span class="fu">case_when</span>(</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    MOE_perc <span class="sc">&lt;</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"High Confidence"</span>, </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    MOE_perc <span class="sc">&gt;=</span><span class="dv">5</span> <span class="sc">&amp;</span> MOE_perc <span class="sc">&lt;</span><span class="dv">10</span> <span class="sc">~</span> <span class="st">"Moderate Confidence"</span>, </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    MOE_perc <span class="sc">&gt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">"Low Confidence"</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a summary showing count of counties in each reliability category</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>county_level <span class="sc">%&gt;%</span> </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(confidence_level, <span class="at">name =</span> <span class="st">"county"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">share =</span> county <span class="sc">/</span> <span class="fu">sum</span>(county) <span class="sc">*</span> <span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  confidence_level    county share
+  &lt;chr&gt;                &lt;int&gt; &lt;dbl&gt;
+1 High Confidence         15  23.4
+2 Low Confidence          23  35.9
+3 Moderate Confidence     26  40.6</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Hint: use count() and mutate() to add percentages</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="high-uncertainty-counties" class="level2">
+<h2 class="anchored" data-anchor-id="high-uncertainty-counties">2.3 High Uncertainty Counties</h2>
+<p><strong>Your Task:</strong> Identify the 5 counties with the highest MOE percentages.</p>
+<p><strong>Requirements:</strong> - Sort by MOE percentage (highest first) - Select the top 5 counties - Display: county name, median income, margin of error, MOE percentage, reliability category - Format as a professional table using <code>kable()</code></p>
+<p><strong>Hint:</strong> Use <code>arrange()</code>, <code>slice()</code>, and <code>select()</code> functions.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create table of top 5 counties by MOE percentage</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>reliability_table <span class="ot">&lt;-</span> county_level <span class="sc">%&gt;%</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>( <span class="fu">desc</span>(MOE_perc)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( <span class="at">County =</span> county, </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">Median_Income=</span> med_hh_incE,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">MOE =</span> med_hh_incM, </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>          MOE_perc, </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">Reliability =</span> confidence_level)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>reliability_table</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  County       Median_Income   MOE MOE_perc Reliability   
+  &lt;chr&gt;                &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;         
+1 Cameron              69847 16919     24.2 Low Confidence
+2 Red River            43821  8891     20.3 Low Confidence
+3 Madison              34508  6612     19.2 Low Confidence
+4 East Carroll         30856  4931     16.0 Low Confidence
+5 St. James            62946  9793     15.6 Low Confidence</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Format as table with kable() - include appropriate column names and caption</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>reliability <span class="ot">&lt;-</span> county_level <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(MOE_perc)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    county,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    med_hh_incE,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    med_hh_incM,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    MOE_perc,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    confidence_level</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      <span class="st">"County"</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Median Household Income"</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Margin of Error"</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">"MOE (%)"</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Reliability"</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Top 5 Counties with the Highest Median Household Income MOE Percentages"</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">","</span>)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>),</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> <span class="cn">FALSE</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">general =</span> <span class="fu">c</span>(</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Margin of Error (MOE) expressed as a percentage of the estimate."</span>,</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🟢 High Confidence: MOE &lt; 5%"</span>,</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🟡 Moderate Confidence: MOE 5–10%"</span>,</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🔴 Low Confidence: MOE ≥ 10%"</span>,</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Source: American Community Survey 5-Year Estimates"</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">general_title =</span> <span class="st">"Notes:"</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>reliability</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Top 5 Counties with the Highest Median Household Income MOE Percentages</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">County</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Median Household Income</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Margin of Error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">MOE (%)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Reliability</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cameron</td>
+<td style="text-align: right;">69,847</td>
+<td style="text-align: right;">16,919</td>
+<td style="text-align: right;">24.22</td>
+<td style="text-align: left;">Low Confidence</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Red River</td>
+<td style="text-align: right;">43,821</td>
+<td style="text-align: right;">8,891</td>
+<td style="text-align: right;">20.29</td>
+<td style="text-align: left;">Low Confidence</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Madison</td>
+<td style="text-align: right;">34,508</td>
+<td style="text-align: right;">6,612</td>
+<td style="text-align: right;">19.16</td>
+<td style="text-align: left;">Low Confidence</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">East Carroll</td>
+<td style="text-align: right;">30,856</td>
+<td style="text-align: right;">4,931</td>
+<td style="text-align: right;">15.98</td>
+<td style="text-align: left;">Low Confidence</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">St. James</td>
+<td style="text-align: right;">62,946</td>
+<td style="text-align: right;">9,793</td>
+<td style="text-align: right;">15.56</td>
+<td style="text-align: left;">Low Confidence</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><span style="font-style: italic;">Notes:</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> Margin of Error (MOE) expressed as a percentage of the estimate.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> 🟢 High Confidence: MOE &lt; 5%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> 🟡 Moderate Confidence: MOE 5–10%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> 🔴 Low Confidence: MOE ≥ 10%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> Source: American Community Survey 5-Year Estimates</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+</div>
+<p><strong>Data Quality Commentary:</strong></p>
+<p>All five parishes with the highest income uncertainty fall into the Low Confidence category, with Cameron Parish showing the most extreme MOE at 24.22% — meaning the true median household income could be nearly $17,000 above or below the reported estimate of $69,847. An algorithmic system relying on this income data would be most likely to misclassify Cameron, Red River, Madison, East Carroll, and St.&nbsp;James parishes, all of which are small, rural Louisiana parishes where the ACS samples too few households to produce stable estimates. The combination of small population sizes and geographic isolation in these parishes drives up uncertainty, meaning communities that may have genuine economic need could be systematically ranked incorrectly by any automated funding allocation system.</p>
+</section>
+</section>
+<section id="part-3-neighborhood-level-analysis" class="level1">
+<h1>Part 3: Neighborhood-Level Analysis</h1>
+<section id="focus-area-selection" class="level2">
+<h2 class="anchored" data-anchor-id="focus-area-selection">3.1 Focus Area Selection</h2>
+<p><strong>Your Task:</strong> Select 2-3 counties from your reliability analysis for detailed tract-level study.</p>
+<p><strong>Strategy:</strong> Choose counties that represent different reliability levels (e.g., 1 high confidence, 1 moderate, 1 low confidence) to compare how data quality varies.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use filter() to select 2-3 counties from your county_reliability data</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>selected_counties <span class="ot">&lt;-</span> county_level <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(confidence_level <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"High Confidence"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Moderate Confidence"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Low Confidence"</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(confidence_level) <span class="sc">%&gt;%</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(MOE_perc, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>selected_counties</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 9
+  GEOID NAME           med_hh_incE med_hh_incM tot_popE tot_popM county MOE_perc
+  &lt;chr&gt; &lt;chr&gt;                &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
+1 22069 Natchitoches …       41310        2062    37478       NA Natch…     4.99
+2 22023 Cameron Paris…       69847       16919     5447       NA Camer…    24.2 
+3 22053 Jefferson Dav…       52470        5233    32277       NA Jeffe…     9.97
+# ℹ 1 more variable: confidence_level &lt;chr&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store the selected counties in a variable called selected_counties</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the selected counties with their key characteristics</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>selected_counties <span class="sc">%&gt;%</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>      county,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>      med_hh_incE,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      MOE_perc, </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      confidence_level</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">"County"</span>,</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Median Household Income"</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">"MOE (%)"</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Reliability"</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Selected Counties to Run a tract level analysis"</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">","</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>),</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> <span class="cn">FALSE</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">general =</span> <span class="fu">c</span>(</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Margin of Error (MOE) expressed as a percentage of the estimate."</span>,</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🟢 High Confidence: MOE &lt; 5%"</span>,</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🟡 Moderate Confidence: MOE 5–10%"</span>,</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🔴 Low Confidence: MOE ≥ 10%"</span>,</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Source: American Community Survey 5-Year Estimates"</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">general_title =</span> <span class="st">"Notes:"</span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Selected Counties to Run a tract level analysis</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">County</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Median Household Income</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">MOE (%)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Reliability</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Natchitoches</td>
+<td style="text-align: right;">41,310</td>
+<td style="text-align: right;">4.99</td>
+<td style="text-align: left;">High Confidence</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cameron</td>
+<td style="text-align: right;">69,847</td>
+<td style="text-align: right;">24.22</td>
+<td style="text-align: left;">Low Confidence</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jefferson Davis</td>
+<td style="text-align: right;">52,470</td>
+<td style="text-align: right;">9.97</td>
+<td style="text-align: left;">Moderate Confidence</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><span style="font-style: italic;">Notes:</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> Margin of Error (MOE) expressed as a percentage of the estimate.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> 🟢 High Confidence: MOE &lt; 5%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> 🟡 Moderate Confidence: MOE 5–10%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> 🔴 Low Confidence: MOE ≥ 10%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> Source: American Community Survey 5-Year Estimates</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show: county name, median income, MOE percentage, reliability category</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Comment on the output:</strong></p>
+<p>The three selected parishes — Cameron, Jefferson Davis, and Natchitoches — represent distinct reliability tiers, allowing for a meaningful comparison of how data quality varies across Louisiana’s rural landscape. Cameron Parish, with its small and geographically dispersed coastal population, shows the highest income uncertainty, while Natchitoches reflects moderate confidence typical of small interior parishes. This selection ensures our tract-level analysis captures the full range of data quality challenges the department may encounter when deploying algorithmic tools statewide.</p>
+</section>
+<section id="tract-level-demographics" class="level2">
+<h2 class="anchored" data-anchor-id="tract-level-demographics">3.2 Tract-Level Demographics</h2>
+<p><strong>Your Task:</strong> Get demographic data for census tracts in your selected counties.</p>
+<p><strong>Requirements:</strong> - Geography: tract level - Variables: white alone (B03002_003), Black/African American (B03002_004), Hispanic/Latino (B03002_012), total population (B03002_001) - Use the same state and year as before - Output format: wide - <strong>Challenge:</strong> You’ll need county codes, not names. Look at the GEOID patterns in your county data for hints.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define your race/ethnicity variables with descriptive names</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>tract_level <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> my_state, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> <span class="st">"tract"</span>, </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> <span class="fu">c</span>(<span class="st">"069"</span>, <span class="st">"023"</span>, <span class="st">"053"</span>),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">med_hh_inc =</span> <span class="st">"B19013_001"</span>, </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">tot_pop =</span> <span class="st">"B03002_001"</span>, </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">white =</span> <span class="st">"B03002_003"</span>, </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">black =</span> <span class="st">"B03002_004"</span>, </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">hisp =</span> <span class="st">"B03002_012"</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  ), </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2022</span>, </span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">survey =</span> <span class="st">"acs5"</span>, </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">"wide"</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Add readable tract and county name columns using str_extract() or similar</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>tract_level_clean <span class="ot">&lt;-</span> tract_level <span class="sc">%&gt;%</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">tract_number =</span> <span class="fu">str_extract</span>(NAME, <span class="st">"</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.?</span><span class="sc">\\</span><span class="st">d*"</span>),</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">county_name =</span> <span class="fu">str_extract</span>(NAME, <span class="st">"(?&lt;=; )[^;]+(?= Parish)"</span>)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Use get_acs() to retrieve tract-level data</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Hint: You may need to specify county codes in the county parameter</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate percentage of each group using mutate()</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Create percentages for white, Black, and Hispanic populations</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>tract_level_clean <span class="ot">&lt;-</span> tract_level_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">perc_white =</span> ((whiteE<span class="sc">/</span> tot_popE)<span class="sc">*</span><span class="dv">100</span>), </span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>          <span class="at">perc_black =</span> ((blackE<span class="sc">/</span>tot_popE)<span class="sc">*</span><span class="dv">100</span>), </span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>          <span class="at">perc_hisp =</span> ((hispE<span class="sc">/</span>tot_popE)<span class="sc">*</span><span class="dv">100</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="demographic-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="demographic-analysis">3.3 Demographic Analysis</h2>
+<p><strong>Your Task:</strong> Analyze the demographic patterns in your selected areas.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the tract with the highest percentage of Hispanic/Latino residents</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Hint: use arrange() and slice() to get the top tract</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>highest_hisp_tract <span class="ot">&lt;-</span> tract_level_clean <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">perc_hisp =</span> (hispE <span class="sc">/</span> tot_popE) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(perc_hisp)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tract_number, county_name, tot_popE, hispE, perc_hisp)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>highest_hisp_tract</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  tract_number county_name     tot_popE hispE perc_hisp
+  &lt;chr&gt;        &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+1 4.01         Jefferson Davis     2365   159      6.72</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average demographics by county using group_by() and summarize()</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Show: number of tracts, average percentage for each racial/ethnic group</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>county_summary <span class="ot">&lt;-</span> tract_level_clean <span class="sc">%&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">perc_white =</span> (whiteE <span class="sc">/</span> tot_popE) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">perc_black =</span> (blackE <span class="sc">/</span> tot_popE) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">perc_hisp =</span> (hispE <span class="sc">/</span> tot_popE) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county_name) <span class="sc">%&gt;%</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_tracts =</span> <span class="fu">n</span>(),</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_perc_white =</span> <span class="fu">mean</span>(perc_white, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_perc_black =</span> <span class="fu">mean</span>(perc_black, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_perc_hisp =</span> <span class="fu">mean</span>(perc_hisp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>county_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  county_name     num_tracts avg_perc_white avg_perc_black avg_perc_hisp
+  &lt;chr&gt;                &lt;int&gt;          &lt;dbl&gt;          &lt;dbl&gt;         &lt;dbl&gt;
+1 Cameron                  5           92.4           1.08          1.60
+2 Jefferson Davis          8           75.5          18.2           2.69
+3 Natchitoches            11           51.4          39.6           2.22</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a nicely formatted table of your results using kable()</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>county_summary <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Parish"</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Number of Tracts"</span>,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Avg % White"</span>,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Avg % Black"</span>,</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Avg % Hispanic/Latino"</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Average Demographics by Parish"</span>,</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">","</span>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>),</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> <span class="cn">FALSE</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">general =</span> <span class="fu">c</span>(</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Percentages represent the average across all census tracts within each parish."</span>,</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Source: American Community Survey 5-Year Estimates (2022)"</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">general_title =</span> <span class="st">"Notes:"</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Average Demographics by Parish</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Parish</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Number of Tracts</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Avg % White</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Avg % Black</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Avg % Hispanic/Latino</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cameron</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">92.38</td>
+<td style="text-align: right;">1.08</td>
+<td style="text-align: right;">1.60</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jefferson Davis</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">75.48</td>
+<td style="text-align: right;">18.17</td>
+<td style="text-align: right;">2.69</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Natchitoches</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">51.38</td>
+<td style="text-align: right;">39.58</td>
+<td style="text-align: right;">2.22</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><span style="font-style: italic;">Notes:</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> Percentages represent the average across all census tracts within each parish.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> Source: American Community Survey 5-Year Estimates (2022)</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="part-4-comprehensive-data-quality-evaluation" class="level1">
+<h1>Part 4: Comprehensive Data Quality Evaluation</h1>
+<section id="moe-analysis-for-demographic-variables" class="level2">
+<h2 class="anchored" data-anchor-id="moe-analysis-for-demographic-variables">4.1 MOE Analysis for Demographic Variables</h2>
+<p><strong>Your Task:</strong> Examine margins of error for demographic variables to see if some communities have less reliable data.</p>
+<p><strong>Requirements:</strong> - Calculate MOE percentages for each demographic variable - Flag tracts where any demographic variable has MOE &gt; 15% - Create summary statistics</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate MOE percentages for white, Black, and Hispanic variables</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Hint: use the same formula as before (margin/estimate * 100)</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>tract_level_clean <span class="ot">&lt;-</span> tract_level_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> ( <span class="at">MOE_white =</span> ((whiteM<span class="sc">/</span>whiteE)<span class="sc">*</span><span class="dv">100</span>), </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">MOE_black =</span> (( blackM<span class="sc">/</span> blackE) <span class="sc">*</span><span class="dv">100</span>),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">MOE_hisp =</span> ((hispM<span class="sc">/</span>hispE)<span class="sc">*</span><span class="dv">100</span>))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a flag for tracts with high MOE on any demographic variable</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>tract_level_clean <span class="ot">&lt;-</span> tract_level_clean <span class="sc">%&gt;%</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">high_MOE_flag =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">replace_na</span>(MOE_white <span class="sc">&gt;</span> <span class="dv">15</span>, <span class="cn">FALSE</span>) <span class="sc">|</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">replace_na</span>(MOE_black <span class="sc">&gt;</span> <span class="dv">15</span>, <span class="cn">FALSE</span>) <span class="sc">|</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">replace_na</span>(MOE_hisp <span class="sc">&gt;</span> <span class="dv">15</span>, <span class="cn">FALSE</span>),</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🔴 High MOE (&gt;15%)"</span>,</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Acceptable MOE"</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Use logical operators (| for OR) in an ifelse() statement</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Create summary statistics showing how many tracts have data quality issues</span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>tract_level_clean <span class="sc">%&gt;%</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county_name, high_MOE_flag) <span class="sc">%&gt;%</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">num_tracts =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Parish"</span>, <span class="st">"Data Quality"</span>, <span class="st">"Number of Tracts"</span>),</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Data Quality Summary by Parish"</span>,</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">","</span>)</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>),</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> <span class="cn">FALSE</span></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">general =</span> <span class="fu">c</span>(</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>      <span class="st">"A tract is flagged if any demographic variable (White, Black, or Hispanic) has MOE &gt; 15%."</span>,</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🔴 High MOE (&gt;15%): Estimates may be unreliable."</span>,</span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Acceptable MOE: Estimates are sufficiently reliable for analysis."</span>,</span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Source: American Community Survey 5-Year Estimates (2022)"</span></span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">general_title =</span> <span class="st">"Notes:"</span></span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Data Quality Summary by Parish</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Parish</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Data Quality</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Number of Tracts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cameron</td>
+<td style="text-align: left;">🔴 High MOE (&gt;15%) |</td>
+<td style="text-align: right;">5|</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jefferson Davis</td>
+<td style="text-align: left;">🔴 High MOE (&gt;15%) |</td>
+<td style="text-align: right;">8|</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Natchitoches</td>
+<td style="text-align: left;">🔴 High MOE (&gt;15%) |</td>
+<td style="text-align: right;">11|</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><span style="font-style: italic;">Notes:</span></td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> A tract is flagged if any demographic variable (White, Black, or Hispanic) has MOE &gt; 15%.</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> 🔴 High MOE (&gt;15%): Estimates may be unreliable.</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> Acceptable MOE: Estimates are sufficiently reliable for analysis.</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> Source: American Community Survey 5-Year Estimates (2022)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+</div>
+</section>
+<section id="pattern-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="pattern-analysis">4.2 Pattern Analysis</h2>
+<p><strong>Your Task:</strong> Investigate whether data quality problems are randomly distributed or concentrated in certain types of communities.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Group tracts by whether they have high MOE issues</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>moe_comparison <span class="ot">&lt;-</span> tract_level_clean <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county_name) <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_tracts          =</span> <span class="fu">n</span>(),</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_population      =</span> <span class="fu">mean</span>(tot_popE,  <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_perc_white       =</span> <span class="fu">mean</span>(perc_white, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_perc_black       =</span> <span class="fu">mean</span>(perc_black, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_perc_hisp        =</span> <span class="fu">mean</span>(perc_hisp,  <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">perc_unreliable_white =</span> <span class="fu">mean</span>(<span class="fu">replace_na</span>(MOE_white <span class="sc">&gt;</span> <span class="dv">15</span>, <span class="cn">FALSE</span>)) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">perc_unreliable_black =</span> <span class="fu">mean</span>(<span class="fu">replace_na</span>(MOE_black <span class="sc">&gt;</span> <span class="dv">15</span>, <span class="cn">FALSE</span>)) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">perc_unreliable_hisp  =</span> <span class="fu">mean</span>(<span class="fu">replace_na</span>(MOE_hisp  <span class="sc">&gt;</span> <span class="dv">15</span>, <span class="cn">FALSE</span>)) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average characteristics for each group:</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co"># - population size, demographic percentages</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Use group_by() and summarize() to create this comparison</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a professional table showing the patterns</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>moe_comparison <span class="sc">%&gt;%</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Parish"</span>,</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Tracts"</span>,</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Avg Population"</span>,</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Avg % White"</span>,</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Avg % Black"</span>,</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Avg % Hispanic"</span>,</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>      <span class="st">"% Tracts Unreliable (White)"</span>,</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>      <span class="st">"% Tracts Unreliable (Black)"</span>,</span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>      <span class="st">"% Tracts Unreliable (Hispanic)"</span></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Demographic Estimates and Data Reliability by Parish"</span>,</span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">","</span>)</span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(</span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>),</span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> <span class="cn">FALSE</span></span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(</span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">general =</span> <span class="fu">c</span>(</span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>      <span class="st">"% Tracts Unreliable = share of tracts where MOE exceeds 15% of the estimate."</span>,</span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>      <span class="st">"High unreliability for minority groups reflects small subgroup populations in these parishes."</span>,</span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🔴 Estimates with high MOE should be interpreted with caution."</span>,</span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Source: American Community Survey 5-Year Estimates (2022)"</span></span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">general_title =</span> <span class="st">"Notes:"</span></span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Demographic Estimates and Data Reliability by Parish</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Parish</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Tracts</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Avg Population</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Avg % White</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Avg % Black</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Avg % Hispanic</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">% Tracts Unreliable (White)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">% Tracts Unreliable (Black)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">% Tracts Unreliable (Hispanic)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cameron</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1,089.40</td>
+<td style="text-align: right;">92.38</td>
+<td style="text-align: right;">1.08</td>
+<td style="text-align: right;">1.60</td>
+<td style="text-align: right;">80.00</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jefferson Davis</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">4,034.62</td>
+<td style="text-align: right;">75.48</td>
+<td style="text-align: right;">18.17</td>
+<td style="text-align: right;">2.69</td>
+<td style="text-align: right;">50.00</td>
+<td style="text-align: right;">100.00</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Natchitoches</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">3,407.09</td>
+<td style="text-align: right;">51.38</td>
+<td style="text-align: right;">39.58</td>
+<td style="text-align: right;">2.22</td>
+<td style="text-align: right;">81.82</td>
+<td style="text-align: right;">90.91</td>
+<td style="text-align: right;">100</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><span style="font-style: italic;">Notes:</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> % Tracts Unreliable = share of tracts where MOE exceeds 15% of the estimate.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> High unreliability for minority groups reflects small subgroup populations in these parishes.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> 🔴 Estimates with high MOE should be interpreted with caution.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> Source: American Community Survey 5-Year Estimates (2022)</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+</div>
+<p><strong>Pattern Analysis:</strong></p>
+<p>The analysis reveals that data quality problems are not randomly distributed — they are systematically concentrated among minority demographic groups across all three parishes. Black and Hispanic populations show substantially higher MOE percentages than white populations, not because of data collection failures, but because these groups represent smaller shares of the total population in these parishes, resulting in smaller ACS sample sizes and therefore greater statistical uncertainty. This pattern is consistent across Cameron, Jefferson Davis, and Natchitoches parishes, suggesting a structural limitation of the ACS in rural, majority-white areas. The practical implication is serious: an algorithm relying on demographic estimates for these communities would have the least reliable data precisely for the minority groups it may be intended to serve.</p>
+</section>
+</section>
+<section id="part-5-policy-recommendations" class="level1">
+<h1>Part 5: Policy Recommendations</h1>
+<section id="analysis-integration-and-professional-summary" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-integration-and-professional-summary">5.1 Analysis Integration and Professional Summary</h2>
+<p><strong>Your Task:</strong> Write an executive summary that integrates findings from all four analyses.</p>
+<p><strong>Executive Summary Requirements:</strong> 1. <strong>Overall Pattern Identification</strong>: What are the systematic patterns across all your analyses? 2. <strong>Equity Assessment</strong>: Which communities face the greatest risk of algorithmic bias based on your findings? 3. <strong>Root Cause Analysis</strong>: What underlying factors drive both data quality issues and bias risk? 4. <strong>Strategic Recommendations</strong>: What should the Department implement to address these systematic issues?</p>
+<p><strong>Executive Summary:</strong></p>
+<p><strong>Overall Pattern Identification:</strong> Across all four analyses, a consistent pattern emerges — data reliability in Louisiana’s rural parishes is inversely related to population size and demographic diversity. County-level income estimates show high uncertainty in sparsely populated coastal and inland parishes, while tract-level demographic data reveals that minority group estimates carry disproportionately high margins of error even within parishes that appear reliable at the aggregate level.</p>
+<p><strong>Equity Assessment:</strong> Black and Hispanic residents across Cameron, Jefferson Davis, and Natchitoches parishes face the greatest risk of algorithmic harm. Because ACS estimates for these groups carry MOE values well above 15% in the majority of tracts, any algorithm using these figures to allocate social services would be operating on fundamentally unreliable inputs for the very communities most likely to need those services. This creates a feedback loop where data scarcity compounds existing inequity.</p>
+<p><strong>Root Cause Analysis:</strong> The underlying driver of both data quality issues and bias risk is the same: small subgroup population sizes in rural parishes lead to small ACS sample sizes, which in turn produce wide confidence intervals. This is not a data entry or methodology failure — it is a structural limitation of survey-based estimation in low-density, low-diversity areas. Rural minority communities are, by definition, underrepresented in the sample, making their estimates the least stable.</p>
+<p><strong>Strategic Recommendations:</strong> The Department of Human Services should implement a tiered approach to algorithmic decision-making that explicitly accounts for data reliability. High-confidence parishes can proceed with automated prioritization, while moderate-confidence parishes should require human review of algorithmic outputs before funding decisions are finalized. In low-confidence parishes, and for any tract where minority demographic estimates carry MOE above 15%, the department should suspend automated classification entirely and instead conduct targeted supplemental surveys or partner with local organizations to gather ground-truth data before making resource allocation decisions.</p>
+</section>
+<section id="specific-recommendations" class="level2">
+<h2 class="anchored" data-anchor-id="specific-recommendations">6.3 Specific Recommendations</h2>
+<p><strong>Your Task:</strong> Create a decision framework for algorithm implementation.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a summary table using your county reliability data</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Include: county name, median income, MOE percentage, reliability category</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a new column with algorithm recommendations using case_when():</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># - High Confidence: "Safe for algorithmic decisions"</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># - Moderate Confidence: "Use with caution - monitor outcomes"  </span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># - Low Confidence: "Requires manual review or additional data"</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Format as a professional table with kable()</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>county_level <span class="sc">%&gt;%</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(county, med_hh_incE, med_hh_incM, MOE_perc, confidence_level) <span class="sc">%&gt;%</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">recommendation =</span> <span class="fu">case_when</span>(</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>      confidence_level <span class="sc">==</span> <span class="st">"High Confidence"</span>     <span class="sc">~</span> <span class="st">"🟢 Safe for algorithmic decisions"</span>,</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>      confidence_level <span class="sc">==</span> <span class="st">"Moderate Confidence"</span> <span class="sc">~</span> <span class="st">"🟡 Use with caution - monitor outcomes"</span>,</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>      confidence_level <span class="sc">==</span> <span class="st">"Low Confidence"</span>      <span class="sc">~</span> <span class="st">"🔴 Requires manual review or additional data"</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(MOE_perc)) <span class="sc">%&gt;%</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Parish"</span>,</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Median Household Income"</span>,</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Margin of Error"</span>,</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>      <span class="st">"MOE (%)"</span>,</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Reliability"</span>,</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Recommendation"</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Algorithm Implementation Decision Framework by Parish"</span>,</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">","</span>)</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>),</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> <span class="cn">FALSE</span></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(</span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">general =</span> <span class="fu">c</span>(</span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Recommendations based on Margin of Error (MOE) as a percentage of the estimate."</span>,</span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🟢 High Confidence (MOE &lt; 5%): Estimates are reliable for automated decisions."</span>,</span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🟡 Moderate Confidence (MOE 5–10%): Use with human oversight and outcome monitoring."</span>,</span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>      <span class="st">"🔴 Low Confidence (MOE &gt; 10%): Data unreliability poses risk of algorithmic bias."</span>,</span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Source: American Community Survey 5-Year Estimates (2022)"</span></span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">general_title =</span> <span class="st">"Notes:"</span></span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Algorithm Implementation Decision Framework by Parish</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Parish</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Median Household Income</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Margin of Error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">MOE (%)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Reliability</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cameron</td>
+<td style="text-align: right;">69,847</td>
+<td style="text-align: right;">16,919</td>
+<td style="text-align: right;">24.22</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Red River</td>
+<td style="text-align: right;">43,821</td>
+<td style="text-align: right;">8,891</td>
+<td style="text-align: right;">20.29</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Madison</td>
+<td style="text-align: right;">34,508</td>
+<td style="text-align: right;">6,612</td>
+<td style="text-align: right;">19.16</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">East Carroll</td>
+<td style="text-align: right;">30,856</td>
+<td style="text-align: right;">4,931</td>
+<td style="text-align: right;">15.98</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">St. James</td>
+<td style="text-align: right;">62,946</td>
+<td style="text-align: right;">9,793</td>
+<td style="text-align: right;">15.56</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caldwell</td>
+<td style="text-align: right;">45,707</td>
+<td style="text-align: right;">7,075</td>
+<td style="text-align: right;">15.48</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">St. Helena</td>
+<td style="text-align: right;">46,402</td>
+<td style="text-align: right;">7,065</td>
+<td style="text-align: right;">15.23</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LaSalle</td>
+<td style="text-align: right;">59,926</td>
+<td style="text-align: right;">9,117</td>
+<td style="text-align: right;">15.21</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Concordia</td>
+<td style="text-align: right;">38,929</td>
+<td style="text-align: right;">5,562</td>
+<td style="text-align: right;">14.29</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Catahoula</td>
+<td style="text-align: right;">48,259</td>
+<td style="text-align: right;">6,502</td>
+<td style="text-align: right;">13.47</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Avoyelles</td>
+<td style="text-align: right;">38,696</td>
+<td style="text-align: right;">5,175</td>
+<td style="text-align: right;">13.37</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Union</td>
+<td style="text-align: right;">47,068</td>
+<td style="text-align: right;">6,133</td>
+<td style="text-align: right;">13.03</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tensas</td>
+<td style="text-align: right;">35,653</td>
+<td style="text-align: right;">4,539</td>
+<td style="text-align: right;">12.73</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">West Feliciana</td>
+<td style="text-align: right;">71,985</td>
+<td style="text-align: right;">9,132</td>
+<td style="text-align: right;">12.69</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">West Carroll</td>
+<td style="text-align: right;">45,035</td>
+<td style="text-align: right;">5,686</td>
+<td style="text-align: right;">12.63</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pointe Coupee</td>
+<td style="text-align: right;">53,045</td>
+<td style="text-align: right;">6,662</td>
+<td style="text-align: right;">12.56</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Allen</td>
+<td style="text-align: right;">52,755</td>
+<td style="text-align: right;">6,411</td>
+<td style="text-align: right;">12.15</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">East Feliciana</td>
+<td style="text-align: right;">64,709</td>
+<td style="text-align: right;">7,398</td>
+<td style="text-align: right;">11.43</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Morehouse</td>
+<td style="text-align: right;">37,875</td>
+<td style="text-align: right;">4,038</td>
+<td style="text-align: right;">10.66</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Iberville</td>
+<td style="text-align: right;">59,410</td>
+<td style="text-align: right;">6,240</td>
+<td style="text-align: right;">10.50</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Evangeline</td>
+<td style="text-align: right;">34,526</td>
+<td style="text-align: right;">3,582</td>
+<td style="text-align: right;">10.37</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">De Soto</td>
+<td style="text-align: right;">49,807</td>
+<td style="text-align: right;">5,118</td>
+<td style="text-align: right;">10.28</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sabine</td>
+<td style="text-align: right;">40,777</td>
+<td style="text-align: right;">4,130</td>
+<td style="text-align: right;">10.13</td>
+<td style="text-align: left;">Low Confidence</td>
+<td style="text-align: left;">🔴 Requires manual review or additional data |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jefferson Davis</td>
+<td style="text-align: right;">52,470</td>
+<td style="text-align: right;">5,233</td>
+<td style="text-align: right;">9.97</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Franklin</td>
+<td style="text-align: right;">41,129</td>
+<td style="text-align: right;">4,063</td>
+<td style="text-align: right;">9.88</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Grant</td>
+<td style="text-align: right;">57,362</td>
+<td style="text-align: right;">5,569</td>
+<td style="text-align: right;">9.71</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Richland</td>
+<td style="text-align: right;">48,125</td>
+<td style="text-align: right;">4,550</td>
+<td style="text-align: right;">9.45</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Winn</td>
+<td style="text-align: right;">44,922</td>
+<td style="text-align: right;">4,240</td>
+<td style="text-align: right;">9.44</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">West Baton Rouge</td>
+<td style="text-align: right;">80,510</td>
+<td style="text-align: right;">7,340</td>
+<td style="text-align: right;">9.12</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Beauregard</td>
+<td style="text-align: right;">68,525</td>
+<td style="text-align: right;">6,225</td>
+<td style="text-align: right;">9.08</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lincoln</td>
+<td style="text-align: right;">37,001</td>
+<td style="text-align: right;">3,309</td>
+<td style="text-align: right;">8.94</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bienville</td>
+<td style="text-align: right;">34,268</td>
+<td style="text-align: right;">3,054</td>
+<td style="text-align: right;">8.91</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">St. John the Baptist</td>
+<td style="text-align: right;">65,114</td>
+<td style="text-align: right;">5,713</td>
+<td style="text-align: right;">8.77</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lafourche</td>
+<td style="text-align: right;">61,381</td>
+<td style="text-align: right;">4,953</td>
+<td style="text-align: right;">8.07</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Assumption</td>
+<td style="text-align: right;">47,023</td>
+<td style="text-align: right;">3,781</td>
+<td style="text-align: right;">8.04</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">St. Charles</td>
+<td style="text-align: right;">79,191</td>
+<td style="text-align: right;">6,237</td>
+<td style="text-align: right;">7.88</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">41,803</td>
+<td style="text-align: right;">3,193</td>
+<td style="text-align: right;">7.64</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jackson</td>
+<td style="text-align: right;">40,406</td>
+<td style="text-align: right;">2,801</td>
+<td style="text-align: right;">6.93</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Acadia</td>
+<td style="text-align: right;">44,977</td>
+<td style="text-align: right;">2,841</td>
+<td style="text-align: right;">6.32</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vermilion</td>
+<td style="text-align: right;">56,194</td>
+<td style="text-align: right;">3,429</td>
+<td style="text-align: right;">6.10</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Livingston</td>
+<td style="text-align: right;">77,978</td>
+<td style="text-align: right;">4,335</td>
+<td style="text-align: right;">5.56</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Terrebonne</td>
+<td style="text-align: right;">63,088</td>
+<td style="text-align: right;">3,476</td>
+<td style="text-align: right;">5.51</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">St. Bernard</td>
+<td style="text-align: right;">55,857</td>
+<td style="text-align: right;">3,072</td>
+<td style="text-align: right;">5.50</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Webster</td>
+<td style="text-align: right;">34,263</td>
+<td style="text-align: right;">1,859</td>
+<td style="text-align: right;">5.43</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ouachita</td>
+<td style="text-align: right;">49,261</td>
+<td style="text-align: right;">2,573</td>
+<td style="text-align: right;">5.22</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tangipahoa</td>
+<td style="text-align: right;">55,274</td>
+<td style="text-align: right;">2,869</td>
+<td style="text-align: right;">5.19</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Calcasieu</td>
+<td style="text-align: right;">64,370</td>
+<td style="text-align: right;">3,249</td>
+<td style="text-align: right;">5.05</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Claiborne</td>
+<td style="text-align: right;">32,034</td>
+<td style="text-align: right;">1,616</td>
+<td style="text-align: right;">5.04</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Plaquemines</td>
+<td style="text-align: right;">77,996</td>
+<td style="text-align: right;">3,933</td>
+<td style="text-align: right;">5.04</td>
+<td style="text-align: left;">Moderate Confidence</td>
+<td style="text-align: left;">🟡 Use with caution - monitor outcomes |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Natchitoches</td>
+<td style="text-align: right;">41,310</td>
+<td style="text-align: right;">2,062</td>
+<td style="text-align: right;">4.99</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">St. Mary</td>
+<td style="text-align: right;">47,322</td>
+<td style="text-align: right;">2,292</td>
+<td style="text-align: right;">4.84</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">St. Landry</td>
+<td style="text-align: right;">44,478</td>
+<td style="text-align: right;">2,152</td>
+<td style="text-align: right;">4.84</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bossier</td>
+<td style="text-align: right;">64,598</td>
+<td style="text-align: right;">3,122</td>
+<td style="text-align: right;">4.83</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">St. Martin</td>
+<td style="text-align: right;">50,806</td>
+<td style="text-align: right;">2,405</td>
+<td style="text-align: right;">4.73</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caddo</td>
+<td style="text-align: right;">47,572</td>
+<td style="text-align: right;">2,032</td>
+<td style="text-align: right;">4.27</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Iberia</td>
+<td style="text-align: right;">55,190</td>
+<td style="text-align: right;">2,319</td>
+<td style="text-align: right;">4.20</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vernon</td>
+<td style="text-align: right;">56,547</td>
+<td style="text-align: right;">2,244</td>
+<td style="text-align: right;">3.97</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ascension</td>
+<td style="text-align: right;">93,800</td>
+<td style="text-align: right;">3,514</td>
+<td style="text-align: right;">3.75</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rapides</td>
+<td style="text-align: right;">55,407</td>
+<td style="text-align: right;">2,017</td>
+<td style="text-align: right;">3.64</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Orleans</td>
+<td style="text-align: right;">51,116</td>
+<td style="text-align: right;">1,705</td>
+<td style="text-align: right;">3.34</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">St. Tammany</td>
+<td style="text-align: right;">76,914</td>
+<td style="text-align: right;">2,541</td>
+<td style="text-align: right;">3.30</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lafayette</td>
+<td style="text-align: right;">66,617</td>
+<td style="text-align: right;">2,192</td>
+<td style="text-align: right;">3.29</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">East Baton Rouge</td>
+<td style="text-align: right;">62,083</td>
+<td style="text-align: right;">1,760</td>
+<td style="text-align: right;">2.83</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jefferson</td>
+<td style="text-align: right;">63,257</td>
+<td style="text-align: right;">1,592</td>
+<td style="text-align: right;">2.52</td>
+<td style="text-align: left;">High Confidence</td>
+<td style="text-align: left;">🟢 Safe for algorithmic decisions |</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><span style="font-style: italic;">Notes:</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> Recommendations based on Margin of Error (MOE) as a percentage of the estimate.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> 🟢 High Confidence (MOE &lt; 5%): Estimates are reliable for automated decisions.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> 🟡 Moderate Confidence (MOE 5–10%): Use with human oversight and outcome monitoring.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> 🔴 Low Confidence (MOE &gt; 10%): Data unreliability poses risk of algorithmic bias.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> Source: American Community Survey 5-Year Estimates (2022)</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+</div>
+<p><strong>Key Recommendations:</strong></p>
+<p><strong>Your Task:</strong> Use your analysis results to provide specific guidance to the department.</p>
+<ul>
+<li><p><strong>Counties suitable for immediate algorithmic implementation:</strong> Parishes classified as High Confidence — where median household income MOE falls below 5% — are appropriate candidates for algorithmic decision-making. In these areas, the ACS estimates are stable enough that automated prioritization is unlikely to produce systematic misclassification. The department should still monitor outcomes over time to detect any emergent disparities.</p></li>
+<li><p><strong>Counties requiring additional oversight:</strong> Parishes in the Moderate Confidence tier (MOE between 5–10%) can be included in algorithmic workflows, but only with active human oversight. Program officers should review algorithmic outputs for these parishes before finalizing funding decisions, and outcome data should be tracked quarterly to identify whether any communities are being consistently under- or over-served relative to their actual need.</p></li>
+<li><p><strong>Counties needing alternative approaches:</strong> Low Confidence parishes (MOE above 10%), and any tract where minority demographic estimates exceed 15% MOE, should be removed from automated decision pipelines entirely. For these areas, the department should pursue one or more of the following: targeted supplemental ACS surveys, partnerships with local nonprofits and service providers to gather administrative data, or manual needs assessments conducted by field staff with community knowledge.</p>
+<ol type="1">
+<li>Do data reliability patterns persist over time — that is, have the same parishes consistently shown high MOE across multiple ACS waves (2015, 2017, 2019, 2022) — or do reliability issues fluctuate with population shifts and post-disaster displacement (particularly relevant for Cameron Parish post-Hurricane Laura)?</li>
+<li>How do tract-level income MOE patterns compare to demographic MOE patterns — are the tracts with the least reliable income estimates also the tracts with the least reliable racial composition estimates, suggesting compounded data quality risk for the most vulnerable communities?</li>
+<li>Would switching from ACS 5-year estimates to administrative data sources (SNAP enrollment, Medicaid claims, school lunch eligibility) produce more reliable proxies for economic need in low-confidence parishes, and how would that change which communities are prioritized for services?</li>
+</ol></li>
+</ul>
+</section>
+</section>
+<section id="technical-notes" class="level1">
+<h1>Technical Notes</h1>
+<p><strong>Data Sources:</strong> - U.S. Census Bureau, American Community Survey 2018-2022 5-Year Estimates - Retrieved via tidycensus R package on [date]</p>
+<p><strong>Reproducibility:</strong> - All analysis conducted in R version [your version] - Census API key required for replication - Complete code and documentation available at: [your portfolio URL]</p>
+<p><strong>Methodology Notes:</strong> [Describe any decisions you made about data processing, county selection, or analytical choices that might affect reproducibility]</p>
+<p><strong>Limitations:</strong> [Note any limitations in your analysis - sample size issues, geographic scope, temporal factors, etc.]</p>
+<hr>
+<section id="submission-checklist" class="level2">
+<h2 class="anchored" data-anchor-id="submission-checklist">Submission Checklist</h2>
+<p>Before submitting your portfolio link on Canvas:</p>
+<ul class="task-list">
+<li><label><input type="checkbox">All code chunks run without errors</label></li>
+<li><label><input type="checkbox">All “[Fill this in]” prompts have been completed</label></li>
+<li><label><input type="checkbox">Tables are properly formatted and readable</label></li>
+<li><label><input type="checkbox">Executive summary addresses all four required components</label></li>
+<li><label><input type="checkbox">Portfolio navigation includes this assignment</label></li>
+<li><label><input type="checkbox">Census API key is properly set</label></li>
+<li><label><input type="checkbox">Document renders correctly to HTML</label></li>
+</ul>
+<p><strong>Remember:</strong> Submit your portfolio URL on Canvas, not the file itself. Your assignment should be accessible at <code>your-portfolio-url/labs/lab_1/your_file_name.html</code></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

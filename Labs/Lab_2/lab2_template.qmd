@@ -656,7 +656,7 @@ vulnerable_tracts_sf %>%
 
 ```{r}
 # Load your additional dataset
-# ---- Step 1: Load Data ----
+#  Step 1: Load Data 
 schools <- st_read(here("Labs/Lab_2/Data/schools.geojson"))
 bike    <- st_read(here("Labs/Lab_2/Data/bike_network.geojson"))
 
@@ -666,11 +666,11 @@ crime <- read_csv(here("Labs/Lab_2/Data/incidents_part1_part2.csv")) %>%
            crs = 4326) %>%
   st_transform(crs = 2272)
 
-# ---- Step 2: Standardize CRS ----
+# Step 2: Standardize CRS 
 schools <- st_transform(schools, crs = 2272)
 bike    <- st_transform(bike, crs = 2272)
 
-# ---- Verify everything loaded correctly ----
+#Verify everything loaded correctly
 nrow(schools)
 nrow(crime)
 nrow(bike)
@@ -733,23 +733,23 @@ infrastructure to support safe active transportation?"
 
 ```{r}
 # Your spatial analysis
-# ---- Step 1: Create buffers ----
+# Step 1: Create buffers 
 school_buffers <- st_buffer(schools, dist = 1000)
 
-# ---- Step 2: Crime spatial join ----
+# Step 2: Crime spatial join 
 crime_in_zones <- st_join(crime, school_buffers) %>%
   st_drop_geometry() %>%
   filter(!is.na(school_name)) %>%
   group_by(school_name) %>%
   summarise(crime_count = n())
 
-# ---- Step 3: Bike spatial join ----
+# Step 3: Bike spatial join 
 bike_in_zones <- st_join(school_buffers, bike) %>%
   st_drop_geometry() %>%
   group_by(school_name) %>%
   summarise(has_bike_infra = any(!is.na(STREETNAME)))
 
-# ---- Step 4: Join results back to schools ----
+# Step 4: Join results back to schools 
 schools <- schools %>%
   left_join(crime_in_zones, by = "school_name") %>%
   left_join(bike_in_zones,  by = "school_name") %>%
@@ -758,7 +758,7 @@ schools <- schools %>%
     has_bike_infra = replace_na(has_bike_infra, FALSE)
   )
 
-# ---- Step 5: Summary statistics ----
+# Step 5: Summary statistics 
 schools %>%
   st_drop_geometry() %>%
   summarise(
@@ -772,7 +772,7 @@ schools %>%
   )
 
 
-# ---- Step 6: Top 10 highest crime schools ----
+# Step 6: Top 10 highest crime schools 
 schools %>%
   st_drop_geometry() %>%
   select(school_name, grade_level, crime_count, has_bike_infra) %>%
@@ -799,7 +799,8 @@ schools %>%
               )) %>%
   footnote(general = "Crime incidents include Part 1 and Part 2 offenses reported by Philadelphia Police Department",
            general_title = "Note: ")
-# ---- Step 7: Map ----
+
+# Step 7: Map 
 ggplot() +
   geom_sf(data = school_buffers,
           fill = "lightyellow", color = NA, alpha = 0.3) +

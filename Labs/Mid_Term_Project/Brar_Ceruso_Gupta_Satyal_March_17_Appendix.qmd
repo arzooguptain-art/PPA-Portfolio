@@ -1,5 +1,5 @@
 ---
-title: "Technical Appendix: Linear Model to Predict Home Sale Prices in Philadelphia"
+title: "Midterm Project: Predicted Model for Home Sales Price"
 author: "Jenny Brar, Maude Ceruso, Arzoo Gupta, Shubhanga Satyal"
 editor: visual
 format: 
@@ -1946,7 +1946,7 @@ mean(dat$error_dollars, na.rm = TRUE)
 median(dat$error_dollars, na.rm = TRUE)
 ```
 
-Converting predictions back from log scale to dollars provides a more intuitive assessment of model accuracy. The median absolute error is **\$42,994** against a median sale price of **\$250,000**. Mean absolute error of **\$60,818** is pulled upward by a small number of properties the model predicts poorly. This places our model in the acceptable range for an automated valuation model, while highlighting clear opportunities for improvement.
+Converting predictions back from log scale to dollars provides a more intuitive assessment of model accuracy. The median absolute error is **\$42,994** against a median sale price of **\$232,258**. Mean absolute error of **\$60,818** is pulled upward by a small number of properties the model predicts poorly. This places our model in the acceptable range for an automated valuation model, while highlighting clear opportunities for improvement.
 
 ### Identifying Top Predictors for the Neighborhood
 

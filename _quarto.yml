@@ -17,8 +17,8 @@ website:
             text: "Lab 1: Census Data Quality for Policy Decisions"
           - href: Labs/Lab_2/lab2_template.qmd
             text: "Lab 2: Spatial Analysis and Visualization"
-          - href: Labs/Mid_Term_Project/Brar_Ceruso_Gupta_Satyal_March_17_Appendix
-          - text: "Midterm Project: Predicted Housing Modelling"
+          - href: Labs/Mid_Term_Project/Brar_Ceruso_Gupta_Satyal_March_17_Appendix.qmd
+          - text: "Midterm Project: Predicted Model for Home Sales Price"
 
       
 format:

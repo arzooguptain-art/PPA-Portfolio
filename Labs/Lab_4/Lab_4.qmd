@@ -5,8 +5,6 @@ format: html
 editor: visual
 ---
 
-\***AI (Claude Sonnet 4.6 was used to debug code)**
-
 ## **A note on predictive policing:**
 
 This is an academic exercise conducted to understand the mechanics, and the limits, of spatial predictive modeling in a public safety context. Building a model that predicts crime risk is not the same as recommending that one be used, and this lab should be read in that spirit.
@@ -487,6 +485,8 @@ if (nrow(hotspots) > 0) {
 
 ### Part 4: Loading Burglary Data
 
+With the infrastructure features in place, we can now load the outcome variable: 2017 burglary incidents recorded by the Chicago Police Department. These 7,482 reported burglaries are joined to the fishnet grid using a spatial join, so each cell receives a count of how many burglaries occurred within its boundaries.
+
 ```{r burglary-data}
 #| message: false
 #| echo: false
@@ -537,6 +537,14 @@ p1 + p2 +
   )
 ```
 
+Map A shows the raw point locations of all 7,482 burglaries recorded in Chicago in 2017. The distribution is not uniform: the North Side and the lakefront corridor are noticeably sparse, while a dense band running through the West Side and portions of the South Side concentrates the bulk of incidents. The far south and northwest corners of the city are relatively quiet. What the dot map cannot easily convey, however, is the difference between a cluster of 10 incidents and a cluster of 40 — at this density, the eye can only register "many" or "few."
+
+Map B translates that point cloud into a continuous density surface using density estimation. The structure that was visually implied by the dots becomes much clearer here. There are three distinct high-density peaks: one on the upper West Side, and two on the South Side separated by a corridor of lower activity. These are not smoothed-out noise, they are real concentrations of reported burglary risk that the KDE bandwidth has revealed by borrowing signal from neighboring points. The yellow areas at the city's edges and the North Side represent near-baseline risk by comparison.
+
+Together, these two panels establish what the model is trying to predict and where the hardest prediction problem lies. The dense cores visible in Map B are precisely the areas where the model's errors will be largest—where burglary risk is driven by deeply structural conditions that broken alley light data can only partially proxy.
+
+#### Fishnet With Burglary Data 
+
 ```{r comparing-burglary}
 #| fig-width: 8
 #| fig-height: 6
@@ -551,7 +559,6 @@ burglaries_fishnet <- st_join(burglaries, fishnet, join = st_within) %>%
   summarize(countBurglaries = n()) 
 
 
-st_crs(burglaries_fishnet)
 
 # Join back to fishnet (cells with 0 burglaries will be NA)
 fishnet <- fishnet %>%
@@ -582,7 +589,11 @@ ggplot() +
   theme_crime()
 ```
 
+The resulting distribution is heavily right-skewed. The median cell contains just 2 burglaries, but the maximum reaches 40, and nearly a third of all cells— 31.8%—contain zero burglaries entirely. This zero-inflation is one of the core statistical challenges this model must address, and it is why a count regression approach is more appropriate than ordinary linear regression here. A normal distribution simply does not describe data shaped like this.
+
 ### Part 5: KDE Baseline
+
+Before fitting a regression model, we establish a Kernel Density Estimation (KDE) baseline, a purely data-driven smoothing of the 2017 burglary points into a continuous risk surface. KDE doesn't use any predictors; it simply asks where burglaries were concentrated and spreads that signal outward using a bandwidth-determined decay function.
 
 ```{r kde-baseline}
 #| message: false
@@ -620,9 +631,13 @@ cat("✓ Calculated KDE baseline\n")
 
 ```
 
+The KDE map serves two purposes. First, it gives us a visual reference for the geographic structure of burglary risk that the regression model will need to approximate or improve upon. Second, it provides a formal performance benchmark: at the end of this analysis, we can ask whether a model that incorporates broken alley light features actually outperforms a method that uses only the spatial distribution of past crime.
+
+The side-by-side comparison of the violation data and the KDE surface is instructive. The broken light clusters and the burglary density surface share substantial geographic overlap, particularly in the corridors through the West Side, but they are not identical. There are pockets of high burglary density with relatively few broken light complaints, and vice versa. The model will need to capture the shared signal while not being misled by the divergences.
+
 ```{r kde-viz}
-#| fig-width: 8
-#| fig-height: 6
+#| fig-width: 10
+#| fig-height: 4
 #| echo: false
 
 kde <-ggplot() +
@@ -644,6 +659,16 @@ p1 + kde +
     tag_levels = 'A'
   )
 ```
+
+#### Comparing 311 Calls and Burglaries in 2017
+
+Placing the two fishnet maps side by side makes the central question of this analysis visual: do broken alley lights and burglaries cluster in the same places? The answer is largely yes, but with important nuance.
+
+The left map shows broken alley light 311 complaints aggregated to the 500-meter fishnet. The brightest cells—reaching counts above 200—are concentrated in a corridor running through the West Side, with secondary clusters on the South Side. The North Side and lakefront are predominantly dark purple, near zero.
+
+The right map shows 2017 burglary counts on the same grid. The scale is much smaller (maxing at 40 rather than 200), but the spatial pattern rhymes closely with the left. The West Side corridor lights up again, and the South Side clusters reappear in roughly the same locations. The North Side remains comparatively quiet.
+
+But the maps are not identical, and the differences matter as much as the similarities. There are cells with high broken light counts but moderate burglary counts, and a few cells—particularly on the far South Side—where burglaries concentrate without a corresponding spike in light complaints. Areas with low complaint counts may have poor lighting and high crime that simply isn't being reported through that channel. The model that follows attempts to extract signal from the shared geography while acknowledging that the two patterns are correlated proxies, not the same thing.
 
 ```{r comparing-violation-burglary}
 #| fig-width: 10
@@ -713,6 +738,10 @@ cat("  - Variables:", ncol(fishnet_model), "\n")
 
 ```
 
+#### Poisson Regression
+
+We fit two count regression models to explain burglary counts per fishnet cell using three predictors: the raw count of broken alley light complaints in each cell (`lights_out_2017`), the mean distance to the three nearest light complaints (`lights_out.nn`), and the distance to the nearest spatial hot spot cluster (`dist_to_hotspot`).
+
 ```{r poisson-regression}
 #| echo: false
 #| warning: false
@@ -731,7 +760,11 @@ summary(model_poisson)
 
 ```
 
-Checking for over disperson
+The first model is a Poisson regression, which is the standard starting point for count data. All three predictors are highly significant. More broken lights in a cell is positively associated with burglary counts; greater distance from complaints and hot spots is negatively associated, as expected.
+
+#### Checking for Dispersion
+
+However, the dispersion test reveals a dispersion parameter of 3.25, well above the rule-of-thumb threshold of 1.5, indicating that the Poisson model's assumption of equal mean and variance is violated. The data is overdispersed, meaning there is more variability in the burglary counts than Poisson can accommodate.
 
 ```{r dispersion}
 #| echo: false
@@ -753,7 +786,9 @@ if (dispersion > 1.5) {
 
 ```
 
-Fitting Negative Binomial Model
+#### Negative Binomial Model 
+
+The Negative Binomial model addresses this by estimating a separate dispersion parameter (θ = 1.655). The improvement in fit is substantial: AIC drops from 9,032 (Poisson) to 7,557 (Negative Binomial), and the residual deviance falls from 4,964 to 1,861. The coefficient signs and significance patterns are consistent across both models, which gives confidence that the relationships are real and not artifacts of distributional misspecification. We proceed with the Negative Binomial model for all subsequent steps.
 
 ```{r negative-binomial-model}
 #| echo: false
@@ -779,6 +814,12 @@ cat("Negative Binomial AIC:", round(AIC(model_nb), 1), "\n")
 ```
 
 ### Part 7: Spatial Cross-Validation (2017)
+
+Standard cross-validation randomly splits observations into training and test sets, which tends to be optimistic for spatial data because nearby cells share unmeasured characteristics. A model trained on cells adjacent to the test area has already "seen" the spatial context it is being asked to predict. Leave-One-Group-Out (LOGO) cross-validation corrects for this by holding out an entire geographic unit, here, a police district, at a time, training on the remaining 21 districts, and predicting the held-out one.
+
+Across 22 folds, the model achieves a mean MAE of 2.57 burglaries per cell and a mean RMSE of 3.49. Performance varies considerably by district. District 3, produces the highest MAE at 5.87, the model struggles most where burglary counts are high and spatially concentrated in ways the alley light features don't fully capture. Districts 17 and 20 on the Northwest Side produce the lowest errors, around 1.78–1.80, in areas where burglary rates are more moderate and the signal from broken light infrastructure is more spatially consistent.
+
+This geographic variation in error is itself informative. The places the model predicts worst are places where either the broken light data is least reliable as a proxy for conditions, or where the structural drivers of burglary are not well-captured by infrastructure neglect alone.
 
 ```{r LOGO}
 #| warning: false
@@ -856,6 +897,12 @@ cv_results %>%
 ```
 
 ### Part 8: Model Evaluation
+
+Comparing the regression model to the KDE baseline reveals a mixed picture. The KDE baseline achieves a lower MAE (2.06 vs. 2.43) and lower RMSE (2.95 vs. 3.49). By these headline accuracy metrics, the simpler method performs better on 2017 data.
+
+This is not surprising and is worth interpreting carefully rather than treating as a failure of the regression approach. KDE is essentially a sophisticated spatial smoother that encodes where past crime occurred — it is almost guaranteed to fit historical patterns well. The regression model, by contrast, is attempting something harder: it is trying to explain burglary counts from upstream infrastructure conditions rather than simply recapitulating the crime distribution itself. A model that uses broken light features to predict burglaries is more interpretable, more actionable for policy purposes, and potentially more generalizable to new years or new geographies than a KDE surface built from historical crime alone.
+
+The side-by-side map of predicted versus actual counts helps locate where the discrepancies are largest. The model tends to underpredict in the highest-burglary cells — a common pattern with count models when extreme values are rare and the right tail is difficult to capture — and to overpredict in some low-burglary areas with high broken light counts, reinforcing the earlier observation that broken lights and burglaries are correlated but not co-located everywhere.
 
 ```{r}
 #| echo: false
@@ -952,6 +999,14 @@ comparison %>%
 
 ### Part 9: Model Errors
 
+The error maps make the spatial structure of model performance explicit. The model's largest positive residuals, cells where actual burglaries far exceeded predictions, cluster on the West Side and in parts of the South Side, particularly in District 3. These are areas where burglary risk appears to be driven by factors beyond what broken alley light data can capture: concentrated poverty, housing vacancy, and patterns of police under-reporting that the 311 signal does not reflect.
+
+The largest negative residuals, cells where the model predicted more burglaries than occurred, are scattered more evenly across the city, including some higher-income North Side neighborhoods with few broken lights and few burglaries but where the model's proximity features still generate modest positive predictions.
+
+The exponentiated coefficient table provides a final summary of the model's learned relationships. Each additional broken light complaint in a cell is associated with a 0.4% increase in the expected burglary count (rate ratio = 1.004). Each additional meter of distance from the nearest complaint reduces expected burglaries by 0.4% (rate ratio = 0.996). Distance to hot spots shows a similarly small but statistically significant negative relationship. These effect sizes are modest, consistent with the idea that broken alley lights are one of many overlapping signals in a complex spatial system rather than a primary driver of burglary risk.
+
+Taken together, the error analysis reinforces the broader critique in the introduction. The places this model gets wrong most severely are the same places where the underlying data, policing records generated by an institution under federal scrutiny for unconstitutional practices, is least likely to be an accurate representation of where crime actually occurs. Modeling error in this context is not just a technical problem; it is a trace of the structural inequities baked into the data from the start.
+
 ```{r}
 #| fig-width: 10
 #| fig-height: 5
@@ -1011,3 +1066,5 @@ model_summary %>%
     general = "Rate ratios > 1 indicate positive association with burglary counts."
   )
 ```
+
+\*(**Claude Sonnet 4.6 was used to debug code)**

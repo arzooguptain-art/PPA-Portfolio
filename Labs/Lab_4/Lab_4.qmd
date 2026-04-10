@@ -305,6 +305,9 @@ cat("  - Cell area:", round(st_area(fishnet[1,])), "square meters\n")
 ```
 
 ```{r fishnet-alley-lights}
+#| message: false
+#| warning: false
+#| echo: false
 
 # Aggregate alley light violations to fishnet
 lights_out_fishnet <- st_join(lights_out_2017, fishnet, join = st_within) %>%
@@ -322,9 +325,14 @@ summary(fishnet$lights_out_2017)
 
 ```
 
-The fishnet map of broken alley light counts reveals a pattern that the dense dot map above obscured. Most of the city's cells contain relatively few complaints — the map is predominantly dark purple — but a handful of cells, particularly in clusters on the West Side, register counts approaching or exceeding 200. These extreme cells are not randomly distributed; they sit in recognizable corridors of the city that correspond to areas with the longest resolution times and highest duplicate complaint rates we saw in the district maps. The fishnet makes this structure legible for modeling in a way the point map could not.
+The fishnet map of broken alley light counts reveals a pattern that the dense dot map above obscured. Most of the city's cells contain relatively few complaints—the map is predominantly dark purple—but a handful of cells, particularly in clusters on the West Side, register counts approaching or exceeding 200. These extreme cells are not randomly distributed; they sit in recognizable corridors of the city that correspond to areas with the longest resolution times and highest duplicate complaint rates we saw in the district maps. The fishnet makes this structure legible for modeling in a way the point map could not.
+
+t also makes a quiet data quality problem visible. The North Side and lakefront cells are almost uniformly dark, near-zero complaint counts, while structurally similar streets in other parts of the city register far more. This could reflect genuinely better infrastructure maintenance. Or it could reflect lower reporting rates, faster city response that resolves complaints before they accumulate, or simply less trust in 311 as a useful channel.
 
 ```{r fishnet-violation-viz}
+#| message: false
+#| warning: false
+#| echo: false
 
 ggplot() +
   geom_sf(data = fishnet, aes(fill = lights_out_2017), color = NA) +
@@ -334,7 +342,11 @@ ggplot() +
 
 ```
 
-#### Part 3: Spatial Features
+### Part 3: Spatial Features
+
+#### K-Nearest Neighbours
+
+A single count of broken lights in each cell captures local conditions but misses the spatial context surrounding that cell. A grid cell with zero complaints is not necessarily a well-lit area, it may simply be a place where the reporting behavior or response times we documented above result in fewer recorded complaints. To capture proximity to known infrastructure failures regardless of what happens to be recorded in any individual cell, we calculate the mean distance from each cell's centroid to its three nearest broken light complaints. A small value means the cell sits close to documented failures; a large value means it is relatively isolated from them. This feature allows the model to borrow spatial information from neighboring areas and is particularly important for smoothing over the reporting-behavior noise that makes the raw counts unreliable in some parts of the city.
 
 ```{r nearest-neighbors}
 #| warning: false
@@ -364,9 +376,14 @@ summary(fishnet$lights_out.nn)
 
 ```
 
-Getting Clusters
+#### Local Moran's I
+
+Local Moran's I is a measure of spatial autocorrelation. It asks whether a cell's value is similar to or different from its neighbors in a way that is statistically unlikely to occur by chance. Applied here to the broken alley lights count, it classifies each cell into a cluster type.
 
 ```{r local-moransI}
+#| message: false
+#| warning: false
+#| echo: false
 
 # Function to calculate Local Moran's I
 calculate_local_morans <- function(data, variable, k = 5) {
@@ -399,13 +416,18 @@ calculate_local_morans <- function(data, variable, k = 5) {
     )
 }
 
-# Apply to abandoned cars
+# Apply to alley light
 fishnet <- calculate_local_morans(fishnet, "lights_out_2017", k = 5)
 ```
+
+The resulting map is interesting. Rather than a broad wash of hot spots across the South and West sides, the High-High cells, places where many broken lights are surrounded by more broken lights, appear as a series of tight, discrete clusters scattered along a north-south corridor through the middle of the city, with additional clusters on the West Side. The vast majority of the city, including most of the North Side and far South Side, is classified as not significant.
+
+This spottiness is itself informative. It tells us that infrastructure neglect as captured by 311 data is not a smooth citywide gradient but a pattern of localized clusters, specific corridors and intersections where failures accumulate and persist. It also tells us that the relationship between broken lights and the underlying conditions we are trying to capture is more spatially concentrated than a simple choropleth of complaint counts would suggest. These hot spots will become a key predictive feature: whether a cell sits near one of these clusters of persistent failure is a meaningful signal about the environmental conditions in that area.
 
 ```{r morans-viz}
 #| fig-width: 8
 #| fig-height: 6
+#| echo: false
 
 # Visualize hot spots
 ggplot() +
@@ -432,10 +454,13 @@ ggplot() +
 
 ```
 
-MORANS I explanation
+#### Distance to Hotspots
+
+Using the High-High clusters identified above, we calculate the Euclidean distance from each grid cell to the nearest broken lights hot spot. This converts the cluster map into a continuous feature: cells within or immediately adjacent to a hot spot get near-zero values, while cells far from any significant cluster get large values. It is a concise summary of how embedded each cell is in a zone of systemic infrastructure neglect, and it is the spatial feature most likely to carry predictive power across the full fishnet even in cells that have few direct complaints of their own.
 
 ```{r distance-to-hotspots}
 #| warning: false
+#| echo: false
 
 hotspots <- fishnet %>%
   filter(moran_class == "High-High") %>%
@@ -460,11 +485,14 @@ if (nrow(hotspots) > 0) {
 
 ```
 
+### Part 4: Loading Burglary Data
+
 ```{r burglary-data}
 #| message: false
+#| echo: false
 
 # Load from provided data file (downloaded from Chicago open data portal)
-burglaries <- st_read(here("data/burglaries.shp"), quiet = T) %>% 
+burglaries <- st_read("Data/burglaries.shp", quiet = T) %>% 
   st_transform('ESRI:102271')
 
 
@@ -512,6 +540,9 @@ p1 + p2 +
 ```{r comparing-burglary}
 #| fig-width: 8
 #| fig-height: 6
+#| echo: false
+#| warning: false
+#| message: false
 
 # Spatial join: which cell contains each burglary?
 burglaries_fishnet <- st_join(burglaries, fishnet, join = st_within) %>%
@@ -551,9 +582,12 @@ ggplot() +
   theme_crime()
 ```
 
+### Part 5: KDE Baseline
+
 ```{r kde-baseline}
 #| message: false
 #| warning: false
+#| echo: false
 
 # Convert burglaries to ppp (point pattern) format for spatstat
 burglaries_ppp <- as.ppp(
@@ -589,6 +623,7 @@ cat("✓ Calculated KDE baseline\n")
 ```{r kde-viz}
 #| fig-width: 8
 #| fig-height: 6
+#| echo: false
 
 kde <-ggplot() +
   geom_sf(data = fishnet, aes(fill = kde_value), color = NA) +
@@ -613,6 +648,7 @@ p1 + kde +
 ```{r comparing-violation-burglary}
 #| fig-width: 10
 #| fig-height: 4
+#| echo: false
 
 p1 <- ggplot() +
   geom_sf(data = fishnet, aes(fill = lights_out_2017), color = NA) +
@@ -632,6 +668,9 @@ p1 + p2 +
 ```
 
 ```{r join-police-dsitricts}
+#| echo: false
+#| warning: false
+#| message: false
 
 # Join district information to fishnet
 fishnet <- st_join(
@@ -648,9 +687,13 @@ cat("  - Cells:", nrow(fishnet), "\n")
 
 ```
 
-#### Part 4: Count Regression Models
+### Part 6: Count Regression Models
 
 ```{r prepare-data}
+#| echo: false
+#| warning: false
+#| message: false
+
 # Create clean modeling dataset
 fishnet_model <- fishnet %>%
   st_drop_geometry() %>%
@@ -671,6 +714,10 @@ cat("  - Variables:", ncol(fishnet_model), "\n")
 ```
 
 ```{r poisson-regression}
+#| echo: false
+#| warning: false
+#| message: false
+
 # Fit Poisson regression
 model_poisson <- glm(
   countBurglaries ~ lights_out_2017 + lights_out.nn + 
@@ -687,6 +734,10 @@ summary(model_poisson)
 Checking for over disperson
 
 ```{r dispersion}
+#| echo: false
+#| warning: false
+#| message: false
+
 
 dispersion <- sum(residuals(model_poisson, type = "pearson")^2) / 
               model_poisson$df.residual
@@ -705,6 +756,10 @@ if (dispersion > 1.5) {
 Fitting Negative Binomial Model
 
 ```{r negative-binomial-model}
+#| echo: false
+#| warning: false
+#| message: false
+
 
 # Fit Negative Binomial model
 model_nb <- glm.nb(
@@ -723,7 +778,7 @@ cat("Negative Binomial AIC:", round(AIC(model_nb), 1), "\n")
 
 ```
 
-#### Part 5: Spatial Cross-Validation (2017)
+### Part 7: Spatial Cross-Validation (2017)
 
 ```{r LOGO}
 #| warning: false
@@ -784,6 +839,10 @@ cat("Mean RMSE:", round(mean(cv_results$rmse), 2), "\n")
 ```
 
 ```{r cv-results}
+#| echo: false
+#| warning: false
+#| message: false
+
 # Show results
 cv_results %>%
   arrange(desc(mae)) %>%
@@ -796,9 +855,13 @@ cv_results %>%
 
 ```
 
-#### Part 6: Model Evaluation
+### Part 8: Model Evaluation
 
 ```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
 
 final_model <- glm.nb(
   countBurglaries ~ lights_out_2017 + lights_out.nn + 
@@ -827,6 +890,10 @@ fishnet <- fishnet %>%
 ```{r compare-models -viz}
 #| fig-width: 12
 #| fig-height: 4
+#| echo: false
+#| warning: false
+#| message: false
+
 
 # Create three maps
 p1 <- ggplot() +
@@ -855,6 +922,10 @@ p1 + p2 + p3 +
 ```
 
 ```{r comaring-model-metrics}
+#| echo: false
+#| warning: false
+#| message: false
+
 
 # Calculate performance metrics
 comparison <- fishnet %>%
@@ -879,11 +950,15 @@ comparison %>%
 
 ```
 
-#### Part 7: Model Errors
+### Part 9: Model Errors
 
 ```{r}
 #| fig-width: 10
 #| fig-height: 5
+#| echo: false
+#| warning: false
+#| message: false
+
 
 # Calculate errors
 fishnet <- fishnet %>%
@@ -916,6 +991,10 @@ p1 + p2
 ```
 
 ```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
 # Create nice summary table
 model_summary <- broom::tidy(final_model, exponentiate = TRUE) %>%
   mutate(

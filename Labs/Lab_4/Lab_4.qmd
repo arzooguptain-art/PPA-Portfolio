@@ -251,6 +251,8 @@ resolution_time + mult_complaints +
 
 ```
 
+## Creating a Fishnet
+
 ### Part 2: Fishnet Grid Creation
 
 Rather than analyzing violations as individual points, we aggregate them into a regular grid of 500-meter by 500-meter cells covering the entire city. This fishnet approach converts Chicago into a set of consistently-sized units of analysis compatible with regression modeling. Instead of asking "how many lights are broken near this address," we can ask "how many lights are broken in each cell" a format that allows us to attach predictors and outcomes to the same spatial unit and estimate a statistical relationship between them.
@@ -319,6 +321,8 @@ ggplot() +
   theme_crime()
 
 ```
+
+## Incorporating Spatial Features
 
 ### Part 3: Spatial Features
 
@@ -463,6 +467,8 @@ if (nrow(hotspots) > 0) {
 
 ```
 
+## Analysis of Burglary Data
+
 ### Part 4: Loading Burglary Data
 
 With the infrastructure features in place, we can now load the outcome variable: 2017 burglary incidents recorded by the Chicago Police Department. These 7,482 reported burglaries are joined to the fishnet grid using a spatial join, so each cell receives a count of how many burglaries occurred within its boundaries.
@@ -571,6 +577,8 @@ ggplot() +
 
 The resulting distribution is heavily right-skewed. The median cell contains just 2 burglaries, but the maximum reaches 40, and nearly a third of all cells— 31.8%—contain zero burglaries entirely. This zero-inflation is one of the core statistical challenges this model must address, and it is why a count regression approach is more appropriate than ordinary linear regression here. A normal distribution simply does not describe data shaped like this.
 
+## Kernel Density Estimation
+
 ### Part 5: KDE Baseline
 
 Before fitting a regression model, we establish a Kernel Density Estimation (KDE) baseline, a purely data-driven smoothing of the 2017 burglary points into a continuous risk surface. KDE doesn't use any predictors; it simply asks where burglaries were concentrated and spreads that signal outward using a bandwidth-determined decay function.
@@ -640,7 +648,7 @@ p1 + kde +
   )
 ```
 
-#### Comparing 311 Calls and Burglaries in 2017
+## Comparing 311 Calls and Burglaries in 2017
 
 Placing the two fishnet maps side by side makes the central question of this analysis visual: do broken alley lights and burglaries cluster in the same places? The answer is largely yes, but with important nuance.
 
@@ -691,6 +699,8 @@ cat("  - Districts:", length(unique(fishnet$District)), "\n")
 cat("  - Cells:", nrow(fishnet), "\n")
 
 ```
+
+## Building Regression Models
 
 ### Part 6: Count Regression Models
 
@@ -793,6 +803,8 @@ cat("Negative Binomial AIC:", round(AIC(model_nb), 1), "\n")
 
 ```
 
+## Condcuting Spatial Cross-Validation
+
 ### Part 7: Spatial Cross-Validation (2017)
 
 Standard cross-validation randomly splits observations into training and test sets, which tends to be optimistic for spatial data because nearby cells share unmeasured characteristics. A model trained on cells adjacent to the test area has already "seen" the spatial context it is being asked to predict. Leave-One-Group-Out (LOGO) cross-validation corrects for this by holding out an entire geographic unit, here, a police district, at a time, training on the remaining 21 districts, and predicting the held-out one.
@@ -875,6 +887,8 @@ cv_results %>%
 
 
 ```
+
+## Evaluating the Model
 
 ### Part 8: Model Evaluation
 
@@ -976,6 +990,8 @@ comparison %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
 ```
+
+## Conclusion and Model Errors
 
 ### Part 9: Model Errors
 

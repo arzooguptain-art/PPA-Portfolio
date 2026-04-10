@@ -148,13 +148,38 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#exploratory-data-analysis-for-broken-alley-lights" id="toc-exploratory-data-analysis-for-broken-alley-lights" class="nav-link" data-scroll-target="#exploratory-data-analysis-for-broken-alley-lights">Exploratory Data Analysis for Broken Alley Lights</a>
   <ul class="collapse">
   <li><a href="#part-1-data-loading-exploration" id="toc-part-1-data-loading-exploration" class="nav-link" data-scroll-target="#part-1-data-loading-exploration">Part 1: Data Loading &amp; Exploration</a></li>
+  </ul></li>
+  <li><a href="#creating-a-fishnet" id="toc-creating-a-fishnet" class="nav-link" data-scroll-target="#creating-a-fishnet">Creating a Fishnet</a>
+  <ul class="collapse">
   <li><a href="#part-2-fishnet-grid-creation" id="toc-part-2-fishnet-grid-creation" class="nav-link" data-scroll-target="#part-2-fishnet-grid-creation">Part 2: Fishnet Grid Creation</a></li>
+  </ul></li>
+  <li><a href="#incorporating-spatial-features" id="toc-incorporating-spatial-features" class="nav-link" data-scroll-target="#incorporating-spatial-features">Incorporating Spatial Features</a>
+  <ul class="collapse">
   <li><a href="#part-3-spatial-features" id="toc-part-3-spatial-features" class="nav-link" data-scroll-target="#part-3-spatial-features">Part 3: Spatial Features</a></li>
+  </ul></li>
+  <li><a href="#analysis-of-burglary-data" id="toc-analysis-of-burglary-data" class="nav-link" data-scroll-target="#analysis-of-burglary-data">Analysis of Burglary Data</a>
+  <ul class="collapse">
   <li><a href="#part-4-loading-burglary-data" id="toc-part-4-loading-burglary-data" class="nav-link" data-scroll-target="#part-4-loading-burglary-data">Part 4: Loading Burglary Data</a></li>
+  </ul></li>
+  <li><a href="#kernel-density-estimation" id="toc-kernel-density-estimation" class="nav-link" data-scroll-target="#kernel-density-estimation">Kernel Density Estimation</a>
+  <ul class="collapse">
   <li><a href="#part-5-kde-baseline" id="toc-part-5-kde-baseline" class="nav-link" data-scroll-target="#part-5-kde-baseline">Part 5: KDE Baseline</a></li>
+  </ul></li>
+  <li><a href="#comparing-311-calls-and-burglaries-in-2017" id="toc-comparing-311-calls-and-burglaries-in-2017" class="nav-link" data-scroll-target="#comparing-311-calls-and-burglaries-in-2017">Comparing 311 Calls and Burglaries in 2017</a></li>
+  <li><a href="#building-regression-models" id="toc-building-regression-models" class="nav-link" data-scroll-target="#building-regression-models">Building Regression Models</a>
+  <ul class="collapse">
   <li><a href="#part-6-count-regression-models" id="toc-part-6-count-regression-models" class="nav-link" data-scroll-target="#part-6-count-regression-models">Part 6: Count Regression Models</a></li>
+  </ul></li>
+  <li><a href="#condcuting-spatial-cross-validation" id="toc-condcuting-spatial-cross-validation" class="nav-link" data-scroll-target="#condcuting-spatial-cross-validation">Condcuting Spatial Cross-Validation</a>
+  <ul class="collapse">
   <li><a href="#part-7-spatial-cross-validation-2017" id="toc-part-7-spatial-cross-validation-2017" class="nav-link" data-scroll-target="#part-7-spatial-cross-validation-2017">Part 7: Spatial Cross-Validation (2017)</a></li>
+  </ul></li>
+  <li><a href="#evaluating-the-model" id="toc-evaluating-the-model" class="nav-link" data-scroll-target="#evaluating-the-model">Evaluating the Model</a>
+  <ul class="collapse">
   <li><a href="#part-8-model-evaluation" id="toc-part-8-model-evaluation" class="nav-link" data-scroll-target="#part-8-model-evaluation">Part 8: Model Evaluation</a></li>
+  </ul></li>
+  <li><a href="#conclusion-and-model-errors" id="toc-conclusion-and-model-errors" class="nav-link" data-scroll-target="#conclusion-and-model-errors">Conclusion and Model Errors</a>
+  <ul class="collapse">
   <li><a href="#part-9-model-errors" id="toc-part-9-model-errors" class="nav-link" data-scroll-target="#part-9-model-errors">Part 9: Model Errors</a></li>
   </ul></li>
   </ul>
@@ -293,6 +318,9 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </section>
 </section>
+</section>
+<section id="creating-a-fishnet" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-fishnet">Creating a Fishnet</h2>
 <section id="part-2-fishnet-grid-creation" class="level3">
 <h3 class="anchored" data-anchor-id="part-2-fishnet-grid-creation">Part 2: Fishnet Grid Creation</h3>
 <p>Rather than analyzing violations as individual points, we aggregate them into a regular grid of 500-meter by 500-meter cells covering the entire city. This fishnet approach converts Chicago into a set of consistently-sized units of analysis compatible with regression modeling. Instead of asking “how many lights are broken near this address,” we can ask “how many lights are broken in each cell” a format that allows us to attach predictors and outcomes to the same spatial unit and estimate a statistical relationship between them.</p>
@@ -331,6 +359,9 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </section>
+</section>
+<section id="incorporating-spatial-features" class="level2">
+<h2 class="anchored" data-anchor-id="incorporating-spatial-features">Incorporating Spatial Features</h2>
 <section id="part-3-spatial-features" class="level3">
 <h3 class="anchored" data-anchor-id="part-3-spatial-features">Part 3: Spatial Features</h3>
 <section id="k-nearest-neighbours" class="level4">
@@ -372,6 +403,9 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </section>
 </section>
+</section>
+<section id="analysis-of-burglary-data" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-of-burglary-data">Analysis of Burglary Data</h2>
 <section id="part-4-loading-burglary-data" class="level3">
 <h3 class="anchored" data-anchor-id="part-4-loading-burglary-data">Part 4: Loading Burglary Data</h3>
 <p>With the infrastructure features in place, we can now load the outcome variable: 2017 burglary incidents recorded by the Chicago Police Department. These 7,482 reported burglaries are joined to the fishnet grid using a spatial join, so each cell receives a count of how many burglaries occurred within its boundaries.</p>
@@ -426,6 +460,9 @@ Cells with zero burglaries: 781 / 2458 ( 31.8 %)</code></pre>
 <p>The resulting distribution is heavily right-skewed. The median cell contains just 2 burglaries, but the maximum reaches 40, and nearly a third of all cells— 31.8%—contain zero burglaries entirely. This zero-inflation is one of the core statistical challenges this model must address, and it is why a count regression approach is more appropriate than ordinary linear regression here. A normal distribution simply does not describe data shaped like this.</p>
 </section>
 </section>
+</section>
+<section id="kernel-density-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="kernel-density-estimation">Kernel Density Estimation</h2>
 <section id="part-5-kde-baseline" class="level3">
 <h3 class="anchored" data-anchor-id="part-5-kde-baseline">Part 5: KDE Baseline</h3>
 <p>Before fitting a regression model, we establish a Kernel Density Estimation (KDE) baseline, a purely data-driven smoothing of the 2017 burglary points into a continuous risk surface. KDE doesn’t use any predictors; it simply asks where burglaries were concentrated and spreads that signal outward using a bandwidth-determined decay function.</p>
@@ -445,8 +482,10 @@ Cells with zero burglaries: 781 / 2458 ( 31.8 %)</code></pre>
 </div>
 </div>
 </div>
-<section id="comparing-311-calls-and-burglaries-in-2017" class="level4">
-<h4 class="anchored" data-anchor-id="comparing-311-calls-and-burglaries-in-2017">Comparing 311 Calls and Burglaries in 2017</h4>
+</section>
+</section>
+<section id="comparing-311-calls-and-burglaries-in-2017" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-311-calls-and-burglaries-in-2017">Comparing 311 Calls and Burglaries in 2017</h2>
 <p>Placing the two fishnet maps side by side makes the central question of this analysis visual: do broken alley lights and burglaries cluster in the same places? The answer is largely yes, but with important nuance.</p>
 <p>The left map shows broken alley light 311 complaints aggregated to the 500-meter fishnet. The brightest cells—reaching counts above 200—are concentrated in a corridor running through the West Side, with secondary clusters on the South Side. The North Side and lakefront are predominantly dark purple, near zero.</p>
 <p>The right map shows 2017 burglary counts on the same grid. The scale is much smaller (maxing at 40 rather than 200), but the spatial pattern rhymes closely with the left. The West Side corridor lights up again, and the South Side clusters reappear in roughly the same locations. The North Side remains comparatively quiet.</p>
@@ -472,7 +511,8 @@ Cells with zero burglaries: 781 / 2458 ( 31.8 %)</code></pre>
 </div>
 </div>
 </section>
-</section>
+<section id="building-regression-models" class="level2">
+<h2 class="anchored" data-anchor-id="building-regression-models">Building Regression Models</h2>
 <section id="part-6-count-regression-models" class="level3">
 <h3 class="anchored" data-anchor-id="part-6-count-regression-models">Part 6: Count Regression Models</h3>
 <div class="cell">
@@ -577,6 +617,9 @@ Model Comparison:</code></pre>
 </div>
 </section>
 </section>
+</section>
+<section id="condcuting-spatial-cross-validation" class="level2">
+<h2 class="anchored" data-anchor-id="condcuting-spatial-cross-validation">Condcuting Spatial Cross-Validation</h2>
 <section id="part-7-spatial-cross-validation-2017" class="level3">
 <h3 class="anchored" data-anchor-id="part-7-spatial-cross-validation-2017">Part 7: Spatial Cross-Validation (2017)</h3>
 <p>Standard cross-validation randomly splits observations into training and test sets, which tends to be optimistic for spatial data because nearby cells share unmeasured characteristics. A model trained on cells adjacent to the test area has already “seen” the spatial context it is being asked to predict. Leave-One-Group-Out (LOGO) cross-validation corrects for this by holding out an entire geographic unit, here, a police district, at a time, training on the remaining 21 districts, and predicting the held-out one.</p>
@@ -794,6 +837,9 @@ Model Comparison:</code></pre>
 </div>
 </div>
 </section>
+</section>
+<section id="evaluating-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="evaluating-the-model">Evaluating the Model</h2>
 <section id="part-8-model-evaluation" class="level3">
 <h3 class="anchored" data-anchor-id="part-8-model-evaluation">Part 8: Model Evaluation</h3>
 <p>Comparing the regression model to the KDE baseline reveals a mixed picture. The KDE baseline achieves a lower MAE (2.06 vs.&nbsp;2.43) and lower RMSE (2.95 vs.&nbsp;3.49). By these headline accuracy metrics, the simpler method performs better on 2017 data.</p>
@@ -835,6 +881,9 @@ Model Comparison:</code></pre>
 </div>
 </div>
 </section>
+</section>
+<section id="conclusion-and-model-errors" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-and-model-errors">Conclusion and Model Errors</h2>
 <section id="part-9-model-errors" class="level3">
 <h3 class="anchored" data-anchor-id="part-9-model-errors">Part 9: Model Errors</h3>
 <p>The error maps make the spatial structure of model performance explicit. The model’s largest positive residuals, cells where actual burglaries far exceeded predictions, cluster on the West Side and in parts of the South Side, particularly in District 3. These are areas where burglary risk appears to be driven by factors beyond what broken alley light data can capture: concentrated poverty, housing vacancy, and patterns of police under-reporting that the 311 signal does not reflect.</p>

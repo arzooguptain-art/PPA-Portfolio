@@ -77,7 +77,7 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -138,17 +138,13 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="2">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
   <li><a href="#a-note-on-predictive-policing" id="toc-a-note-on-predictive-policing" class="nav-link active" data-scroll-target="#a-note-on-predictive-policing"><strong>A note on predictive policing:</strong></a></li>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a>
-  <ul class="collapse">
-  <li><a href="#required-components" id="toc-required-components" class="nav-link" data-scroll-target="#required-components">Required Components</a></li>
-  </ul></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#exploratory-data-analysis-for-broken-alley-lights" id="toc-exploratory-data-analysis-for-broken-alley-lights" class="nav-link" data-scroll-target="#exploratory-data-analysis-for-broken-alley-lights">Exploratory Data Analysis for Broken Alley Lights</a>
   <ul class="collapse">
   <li><a href="#part-1-data-loading-exploration" id="toc-part-1-data-loading-exploration" class="nav-link" data-scroll-target="#part-1-data-loading-exploration">Part 1: Data Loading &amp; Exploration</a></li>
@@ -163,6 +159,10 @@ ul.task-list li input[type="checkbox"] {
   </ul></li>
   </ul>
 </nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -195,10 +195,10 @@ ul.task-list li input[type="checkbox"] {
 <section id="a-note-on-predictive-policing" class="level2">
 <h2 class="anchored" data-anchor-id="a-note-on-predictive-policing"><strong>A note on predictive policing:</strong></h2>
 <p>This is an academic exercise conducted to understand the mechanics, and the limits, of spatial predictive modeling in a public safety context. Building a model that predicts crime risk is not the same as recommending that one be used, and this lab should be read in that spirit.</p>
-<p>Chicago offers one of the most well-documented cautionary examples of what happens when predictive tools move from the classroom into deployment without sufficient scrutiny. It was a story about bad data — and the consent decree is where that becomes legally verifiable. The DOJ investigation that preceded the consent decree was triggered by the 2014 killing of Laquan McDonald. That investigation found that the Chicago Police Department routinely violated the constitutional rights of Black and Latinx residents, used excessive force, and operated with a culture of impunity — and that officers commonly stopped and searched Black youth without legal justification, driven by racial stereotypes rather than reasonable suspicion. <a href="https://www.chicagoreporter.com/six-years-23-percent-chicagos-failed-promise-of-police-reform/"><u>The Chicago Reporter</u></a> The Illinois Attorney General filed a lawsuit in August 2017 to force a consent decree, and it took effect in January 2019. <a href="https://www.chicagopoliceconsentdecree.org/about/"><u>Chicagopoliceconsentdecree</u></a></p>
-<p>This is where a landmark 2019 report by the AI Now Institute becomes directly relevant. The researchers examined 13 jurisdictions that had used predictive policing systems and cross-referenced them with consent decrees and federal court-monitored settlements — using those legal findings as proof that unconstitutional policing practices had shaped the underlying data. Chicago was their first case study: a documented example of a jurisdiction where dirty data was ingested directly into the city’s predictive policing system. <a href="https://www.nyulawreview.org/wp-content/uploads/2019/04/NYULawReview-94-Richardson-Schultz-Crawford.pdf"><u>NYULawReview</u></a> The concept they introduced — “dirty data” — refers to data derived from or influenced by corrupt, biased, and unlawful practices, including both discriminatory policing and manipulation of crime statistics. <a href="https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained"><u>Brennan Center for Justice</u></a> The consent decree provided the legally verified paper trail proving that this is exactly what happened in Chicago.</p>
-<p>This matters for the analysis that follows. The burglary data used in this lab was generated by a police department that was simultaneously under federal scrutiny for unconstitutional practices. Any model trained on that data does not neutrally describe where crime occurs — it describes where a constitutionally non-compliant police department directed its attention and made its arrests.</p>
-<p>After six years of federal oversight and more than $15 million spent on independent monitoring, CPD has fully implemented just 23 percent of the reforms it agreed to. <a href="https://www.chicagoreporter.com/six-years-23-percent-chicagos-failed-promise-of-police-reform/"><u>The Chicago Reporter</u></a> The data being generated today is still produced by an institution mid-reform at best. What follows is an exercise in understanding how spatial predictive models are constructed — offered precisely so we can think critically about why they should never be deployed uncritically, and why Chicago’s experience is not an anomaly but a warning.</p>
+<p>Chicago offers one of the most well-documented cautionary examples of what happens when predictive tools move from the classroom into deployment without sufficient scrutiny. It was a story about bad data, and the consent decree is where that becomes legally verifiable. The DOJ investigation that preceded the consent decree was triggered by the 2014 killing of Laquan McDonald. That investigation found that the Chicago Police Department routinely violated the constitutional rights of Black and Latinx residents, used excessive force, and operated with a culture of impunity, and that officers commonly stopped and searched Black youth without legal justification, driven by racial stereotypes rather than reasonable suspicion. <a href="https://www.chicagoreporter.com/six-years-23-percent-chicagos-failed-promise-of-police-reform/"><u>The Chicago Reporter</u></a> The Illinois Attorney General filed a lawsuit in August 2017 to force a consent decree, and it took effect in January 2019. <a href="https://www.chicagopoliceconsentdecree.org/about/"><u>Chicagopoliceconsentdecree</u></a></p>
+<p>This is where a landmark 2019 report by the AI Now Institute becomes directly relevant. The researchers examined 13 jurisdictions that had used predictive policing systems and cross-referenced them with consent decrees and federal court-monitored settlements; using those legal findings as proof that unconstitutional policing practices had shaped the underlying data. Chicago was their first case study: a documented example of a jurisdiction where dirty data was ingested directly into the city’s predictive policing system. <a href="https://www.nyulawreview.org/wp-content/uploads/2019/04/NYULawReview-94-Richardson-Schultz-Crawford.pdf"><u>NYULawReview</u></a> The concept they introduced, “dirty data,” refers to data derived from or influenced by corrupt, biased, and unlawful practices, including both discriminatory policing and manipulation of crime statistics. The consent decree provided the legally verified paper trail proving that this is exactly what happened in Chicago.</p>
+<p>This matters for the analysis that follows. The burglary data used in this lab was generated by a police department that was simultaneously under federal scrutiny for unconstitutional practices. Any model trained on that data does not neutrally describe where crime occurs, it describes where a constitutionally non-compliant police department directed its attention and made its arrests.</p>
+<p>After six years of federal oversight and more than $15 million spent on independent monitoring, CPD has fully implemented just 23 percent of the reforms it agreed to. <a href="https://www.chicagoreporter.com/six-years-23-percent-chicagos-failed-promise-of-police-reform/"><u>The Chicago Reporter</u></a> The data being generated today is still produced by an institution mid-reform at best. What follows is an exercise in understanding how spatial predictive models are constructed, offered precisely so we can think critically about why they should never be deployed uncritically, and why Chicago’s experience is not an anomaly but a warning.</p>
 </section>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
@@ -218,23 +218,6 @@ ul.task-list li input[type="checkbox"] {
 <pre><code>✓ Working directory: C:/Users/arzoo/OneDrive - PennO365/Documents/GitHub/PPA-Portfolio/Labs/Lab_4 </code></pre>
 </div>
 </div>
-<section id="required-components" class="level3">
-<h3 class="anchored" data-anchor-id="required-components">Required Components</h3>
-<ul class="task-list">
-<li><p><label><input type="checkbox"><strong>Introduction</strong>: Brief description of your chosen 311 violation type and why you selected it</label></p></li>
-<li><p><label><input type="checkbox" checked=""><strong>Data Exploration</strong>: Maps and summary statistics of your violation data</label></p></li>
-<li><p><label><input type="checkbox" checked=""><strong>Fishnet Grid</strong>: Successfully created and visualized grid with aggregated counts</label></p></li>
-<li><p><label><input type="checkbox" checked=""><strong>Spatial Features</strong>: At least 2-3 spatial features calculated (k-NN, distance measures, etc.)</label></p></li>
-<li><p><label><input type="checkbox" checked=""><strong>Local Moran’s I</strong>: Spatial autocorrelation analysis with interpretation</label></p></li>
-<li><p><label><input type="checkbox" checked=""><strong>Count Regression</strong>: Both Poisson and Negative Binomial models with comparison</label></p></li>
-<li><p><label><input type="checkbox" checked=""><strong>Spatial Cross-Validation</strong>: LOGO CV implemented on 2017 data with reported metrics</label></p></li>
-<li><p><label><input type="checkbox"><strong>Temporal Validation</strong>: 2018 data aggregated and tested with 2017 model(OPTIONAL.)</label></p></li>
-<li><p><label><input type="checkbox"><strong>Validation Comparison</strong>: Comparison of spatial vs.&nbsp;temporal validation performance</label></p></li>
-<li><p><label><input type="checkbox"><strong>Model Comparison</strong>: Your model vs.&nbsp;KDE baseline for 2018 predictions</label></p></li>
-<li><p><label><input type="checkbox"><strong>Error Analysis</strong>: Maps and discussion of where model performs well/poorl</label></p></li>
-<li><p><label><input type="checkbox"><strong>Written Explanations</strong>: Your own words explaining each step</label></p></li>
-</ul>
-</section>
 </section>
 <section id="exploratory-data-analysis-for-broken-alley-lights" class="level2">
 <h2 class="anchored" data-anchor-id="exploratory-data-analysis-for-broken-alley-lights">Exploratory Data Analysis for Broken Alley Lights</h2>

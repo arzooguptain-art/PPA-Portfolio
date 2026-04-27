@@ -20,7 +20,9 @@ website:
           - href: Labs/Mid_Term_Project/Brar_Ceruso_Gupta_Satyal_March_17_Appendix.qmd
           - text: "Midterm Project: Predicted Model for Home Sales Price"
           - href: Labs/Lab_4/Lab_4.qmd 
-            text: "Lab 4: Spatial Predictive Analysis; A Critical Examination of Predictive Policing Models" 
+            text: "Lab 4: Spatial Predictive Analysis; A Critical Examination of Predictive Policing Models"
+          - href: Labs/Lab_5/lab_5.qmd
+            text: "Lab 5: Bikeshare SpaceTime Prediction"
 
       
 format:

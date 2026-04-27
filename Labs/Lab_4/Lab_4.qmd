@@ -529,7 +529,7 @@ Map B translates that point cloud into a continuous density surface using densit
 
 Together, these two panels establish what the model is trying to predict and where the hardest prediction problem lies. The dense cores visible in Map B are precisely the areas where the model's errors will be largest—where burglary risk is driven by deeply structural conditions that broken alley light data can only partially proxy.
 
-#### Fishnet With Burglary Data 
+#### Fishnet With Burglary Data
 
 ```{r comparing-burglary}
 #| fig-width: 8
@@ -776,7 +776,7 @@ if (dispersion > 1.5) {
 
 ```
 
-#### Negative Binomial Model 
+#### Negative Binomial Model
 
 The Negative Binomial model addresses this by estimating a separate dispersion parameter (θ = 1.655). The improvement in fit is substantial: AIC drops from 9,032 (Poisson) to 7,557 (Negative Binomial), and the residual deviance falls from 4,964 to 1,861. The coefficient signs and significance patterns are consistent across both models, which gives confidence that the relationships are real and not artifacts of distributional misspecification. We proceed with the Negative Binomial model for all subsequent steps.
 

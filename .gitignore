@@ -9,6 +9,9 @@ _site/
 data_unclean/
 **/cache/
 
+Final_Challenge/data/
+**/cache/
+
 
 # =========================
 # R

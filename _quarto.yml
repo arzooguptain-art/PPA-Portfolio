@@ -23,6 +23,8 @@ website:
             text: "Lab 4: Spatial Predictive Analysis; A Critical Examination of Predictive Policing Models"
           - href: Labs/Lab_5/lab_5.qmd
             text: "Lab 5: Bikeshare SpaceTime Prediction"
+          - href: Labs/Final_Challenge/TechnicalAppendix_Final_v1.qmd
+            text: "Philadelphia Fire Inspection Risk Model"
 
       
 format:

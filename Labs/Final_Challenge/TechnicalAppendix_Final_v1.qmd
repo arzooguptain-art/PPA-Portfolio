@@ -26,11 +26,15 @@ Philadelphia's buildings don't get inspected unless someone complains. With fewe
 
 This report presents a predictive model designed to give the city a better starting point. Using publicly available data on past inspection outcomes, property characteristics, neighbourhood demographics, 311 complaint activity, and the physical location of each building relative to others in the city, the model assigns each property a probability of failing a fire safety inspection. The goal is not to replace inspectors or automate enforcement decisions, it is to help the city direct its limited inspection capacity toward the buildings where failure is most likely, before a complaint ever arrives.
 
+The outcome being predicted is either a building either fails its inspection or it doesn't. Because we are predicting a yes/no outcome rather than a continuous number like temperature or income, we need a model designed specifically for that kind of question. Logistic regression is the standard tool for this it estimates the probability that a building falls into the "fail" category, keeps those probabilities between 0 and 1 where they belong, and lets us set a cutoff to decide when a probability is high enough to flag a building for priority inspection. It also produces odds ratios, which allow us to explain in plain terms how much each factor—vacancy rate, complaint history, building type—shifts the likelihood of failure, making the model's decisions transparent and defensible to non-technical stakeholders.
+
 The model correctly identifies approximately 8 in 10 buildings that go on to fail inspection, while clearing roughly 6 in 10 safe buildings from the high-priority queue. Buildings the model flags as low risk are correct 99% of the time. In practice, this means the city could use the model to generate a ranked list of properties by risk level—inspecting the highest-risk buildings first rather than waiting for residents to report problems.
 
 This document walks through every step of how that model was built: where the data came from, how it was cleaned and joined, what features were constructed and why, how the model was developed and validated, and where it falls short. The limitations and safeguards should be acknowledged and should be incorporated into the city's use of the model. As the model learns from a complaint-driven system and cannot fully escape its biases ,and they are documented here in full.
 
 The goal is a **decision-support triage tool** that helps the city prioritize which buildings to inspect, not a replacement for inspector judgment.
+
+**(AI Acknowledgement: Claude AI Sonnet 4.6 was used to debug code and help in the geocoding process!)**
 
 ------------------------------------------------------------------------
 
@@ -149,6 +153,8 @@ phl_311 <- read.csv("data/311reqs.csv")
 ```
 
 ## ACS Demographics (Block Group)
+
+The ACS Demographic variables have been used at the Block Group level as median household income, renter and owner units, are often not available at the census block level. This ensures that the data is still granular but while still having enough information to be useful in the model. While the model doesn't differentiate between residential and commercial buildings, we recognise the importance of demographic characteristics that could indicate areas which get inspected more or less, and how these variables could alter the model's results. Especially since its documented that inspection is complaint driven.
 
 ```{r acs}
 #| output: false
@@ -1179,7 +1185,7 @@ Upsampling substantially changes model behavior. Sensitivity rises to \~0.94, de
 
 ## Certification Type Fixed Effects
 
-Inspection categories differ substantially in their baseline failure rates — sprinkler inspections fail at significantly higher rates than other types. To prevent the model from conflating inspection difficulty with underlying building risk, we include certification type (`bldngcrtt`) as a categorical fixed effect, allowing the model to compare buildings within similar inspection categories rather than treating all inspections as equivalent.
+Inspection categories differ substantially in their baseline failure rates — sprinkler inspections fail at significantly higher rates than other types. To prevent the model from conflating inspection difficulty with underlying building risk, we include certification type (`bldngcerttype`) as a categorical fixed effect, allowing the model to compare buildings within similar inspection categories rather than treating all inspections as equivalent.
 
 ## Model 4: Add Certification Type Fixed Effects + Threshold Scan
 

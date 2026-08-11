@@ -676,22 +676,3 @@ county_level %>%
         eligibility) produce more reliable proxies for economic need in
         low-confidence parishes, and how would that change which
         communities are prioritized for services?
-
-# Technical Notes
-
-**Data Sources:** - U.S. Census Bureau, American Community Survey
-2018-2022 5-Year Estimates - Retrieved via tidycensus R package on
-\[date\]
-
-**Reproducibility:** - All analysis conducted in R version \[your
-version\] - Census API key required for replication - Complete code and
-documentation available at: \[your portfolio URL\]
-
-**Methodology Notes:** \[Describe any decisions you made about data
-processing, county selection, or analytical choices that might affect
-reproducibility\]
-
-**Limitations:** \[Note any limitations in your analysis - sample size
-issues, geographic scope, temporal factors, etc.\]
-
-------------------------------------------------------------------------

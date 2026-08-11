@@ -1,0 +1,628 @@
+---
+title: "Predicting High-Risk Buildings in Philadelphia"
+subtitle: "From Reactive Inspections to Risk-Based Prioritization"
+author: "Liz Crouse, Shaurya Chauhan, Arzoo Gupta"
+date: "April 28, 2026"
+format:
+  revealjs:
+    theme: serif
+    slide-number: true
+    progress: true
+    transition: fade
+    transition-speed: fast
+    fig-align: center
+    fig-width: 9
+    fig-height: 6
+execute:
+  echo: false
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r setup}
+
+library(tidyverse)
+library(sf)
+library(tigris)
+library(tidycensus)
+library(lubridate)
+library(here)
+library(caret)
+library(pROC)
+library(spdep)
+library(knitr)
+library(kableExtra)
+
+plotTheme <- theme_minimal() +
+  theme(
+    plot.title       = element_text(size = 14, face = "bold"),
+    plot.subtitle    = element_text(size = 10),
+    plot.caption     = element_text(size = 8),
+    axis.text.x      = element_text(size = 10, angle = 45, hjust = 1),
+    axis.text.y      = element_text(size = 10),
+    axis.title       = element_text(size = 11, face = "bold"),
+    panel.grid.major = element_line(colour = "#D0D0D0", linewidth = 0.2),
+    panel.grid.minor = element_blank(),
+    axis.ticks       = element_blank(),
+    legend.position  = "right"
+  )
+
+mapTheme <- theme_void() +
+  theme(
+    plot.title        = element_text(size = 14, face = "bold"),
+    plot.subtitle     = element_text(size = 10),
+    plot.caption      = element_text(size = 8),
+    legend.position   = "right",
+    plot.margin       = margin(1, 1, 1, 1, "cm"),
+    legend.key.height = unit(1, "cm"),
+    legend.key.width  = unit(0.2, "cm")
+  )
+```
+
+```{r load-data}
+#| output: false
+#| warning: false
+#| message: false
+inspections <- read.csv("data/BUILDING_CERTS.csv")
+
+block_groups <- block_groups(state = "PA", county = "Philadelphia") %>%
+  st_transform(crs = 4326)
+
+inspections_fire_opa <- st_read("data/fire_insp_opa.geojson") %>%
+  st_transform(crs = 4326)
+
+phl_311 <- read.csv("data/311reqs.csv")
+
+phl_census <- get_acs(
+  geography = "block group",
+  variables = c(
+    "B19013_001", "B25002_002", "B25002_003", "B25002_001",
+    "B25003_001", "B25003_002", "B25003_003", "B01003_001", "B25071_001"
+  ),
+  state = "PA", county = "Philadelphia", year = 2022,
+  geometry = TRUE, output = "wide"
+) %>%
+  rename(
+    Med_Inc         = B19013_001E,
+    Occupied_Units  = B25002_002E,
+    Vacant_Units    = B25002_003E,
+    Total_Units     = B25002_001E,
+    Total_Occupied  = B25003_001E,
+    Owner_Occupied  = B25003_002E,
+    Renter_Occupied = B25003_003E,
+    Total_Pop       = B01003_001E,
+    Rent_Burden     = B25071_001E
+  ) %>%
+  mutate(
+    Vacancy_Rate        = (Vacant_Units / Total_Units) * 100,
+    Pct_Renter_Occupied = (Renter_Occupied / Total_Occupied) * 100,
+    Pct_Owner_Occupied  = (Owner_Occupied / Total_Occupied) * 100
+  ) %>%
+  select(GEOID, NAME, geometry, Med_Inc, Total_Pop,
+         Vacancy_Rate, Vacant_Units, Total_Units,
+         Pct_Renter_Occupied, Pct_Owner_Occupied, Rent_Burden) %>%
+  st_transform(crs = 4326)
+
+inspections <- inspections %>%
+  mutate(
+    inspectiondate = as.Date(inspectiondate),
+    year    = year(inspectiondate),
+    month   = month(inspectiondate, label = TRUE),
+    quarter = quarter(inspectiondate)
+  )
+```
+
+```{r build-features}
+#| output: false
+#| warning: false
+#| message: false
+
+opa <- st_read("data/opa_properties_public.geojson") %>%
+  filter(sale_price > 10000) %>%
+  mutate(year_built = as.numeric(year_built), age = 2026 - year_built)
+
+block_groups_proj <- st_transform(block_groups, st_crs(opa))
+
+opa_sf_bg <- st_join(
+  opa %>% filter(category_code_description == "SINGLE FAMILY"),
+  block_groups_proj %>% select(GEOID), join = st_within
+) %>% st_drop_geometry() %>%
+  group_by(GEOID) %>%
+  summarize(
+    sf_n_properties     = n(),
+    sf_avg_market_value = mean(market_value, na.rm = TRUE),
+    sf_avg_sale_price   = mean(sale_price,   na.rm = TRUE),
+    sf_avg_total_area   = mean(total_area,   na.rm = TRUE),
+    sf_avg_age          = mean(age,           na.rm = TRUE)
+  )
+
+opa_mf_bg <- st_join(
+  opa %>% filter(category_code_description == "MULTI FAMILY"),
+  block_groups_proj %>% select(GEOID), join = st_within
+) %>% st_drop_geometry() %>%
+  group_by(GEOID) %>%
+  summarize(
+    mf_n_properties     = n(),
+    mf_avg_market_value = mean(market_value, na.rm = TRUE),
+    mf_avg_sale_price   = mean(sale_price,   na.rm = TRUE),
+    mf_avg_total_area   = mean(total_area,   na.rm = TRUE),
+    mf_avg_age          = mean(age,           na.rm = TRUE)
+  )
+
+opa_comm_bg <- st_join(
+  opa %>% filter(category_code_description %in% c("COMMERCIAL", "MIXED USE")),
+  block_groups_proj %>% select(GEOID), join = st_within
+) %>% st_drop_geometry() %>%
+  group_by(GEOID) %>%
+  summarize(
+    comm_n_properties     = n(),
+    comm_avg_market_value = mean(market_value, na.rm = TRUE),
+    comm_avg_sale_price   = mean(sale_price,   na.rm = TRUE),
+    comm_avg_total_area   = mean(total_area,   na.rm = TRUE),
+    comm_avg_age          = mean(age,           na.rm = TRUE)
+  )
+
+phl_311_sf <- phl_311 %>%
+  filter(agency_responsible == "Fire Department") %>%
+  st_as_sf(coords = c("lon", "lat"), crs = 4326)
+
+bg_311 <- st_join(phl_311_sf, block_groups %>% select(GEOID), join = st_within) %>%
+  st_drop_geometry() %>%
+  group_by(GEOID) %>%
+  summarize(n_requests = n()) %>%
+  mutate(n_requests = replace_na(n_requests, 0))
+
+bg_insp_summ <- st_join(
+  inspections_fire_opa,
+  block_groups %>% select(GEOID), join = st_within
+) %>% st_drop_geometry() %>%
+  group_by(GEOID) %>%
+  summarize(
+    avg_dst_nr_  = mean(dst_nr_,  na.rm = TRUE),
+    avg_dst_cntr = mean(dst_cnt,  na.rm = TRUE),
+    avg_dst_trn  = mean(dst_trn,  na.rm = TRUE)
+  )
+
+model_data <- inspections_fire_opa %>%
+  st_transform(crs = st_crs(block_groups)) %>%
+  st_join(block_groups %>% select(GEOID), join = st_within) %>%
+  st_drop_geometry() %>%
+  left_join(opa_sf_bg,    by = "GEOID") %>%
+  left_join(opa_mf_bg,    by = "GEOID") %>%
+  left_join(opa_comm_bg,  by = "GEOID") %>%
+  left_join(bg_311,       by = "GEOID") %>%
+  left_join(bg_insp_summ, by = "GEOID") %>%
+  left_join(phl_census %>% st_drop_geometry(), by = "GEOID") %>%
+  mutate(
+    high_risk         = as.integer(fail == 1),
+    n_requests        = replace_na(n_requests, 0),
+    sf_n_properties   = replace_na(sf_n_properties, 0),
+    mf_n_properties   = replace_na(mf_n_properties, 0),
+    comm_n_properties = replace_na(comm_n_properties, 0),
+    log_n_comm_properties   = log1p(comm_n_properties),
+    log_comm_avg_mv         = log1p(comm_avg_market_value),
+    log_comm_avg_age        = log1p(comm_avg_age),
+    log_n_sf_properties     = log1p(sf_n_properties),
+    log_sf_avg_mv           = log1p(sf_avg_market_value),
+    log_sf_avg_age          = log1p(sf_avg_age),
+    log_mf_avg_mv           = log1p(mf_avg_market_value),
+    log_mf_avg_age          = log1p(mf_avg_age),
+    log_avg_vac_units       = log1p(Vacant_Units),
+    log_n_requests          = log1p(n_requests)
+  ) %>%
+  filter(!is.na(high_risk))
+
+set.seed(42)
+trainIndex <- createDataPartition(y = model_data$high_risk, p = 0.70, list = FALSE)
+train_data <- model_data[trainIndex, ]
+test_data  <- model_data[-trainIndex, ]
+
+train_data_balanced <- upSample(
+  x = train_data %>% select(-fail),
+  y = factor(train_data$fail),
+  yname = "fail"
+) %>% mutate(fail = as.integer(as.character(fail)))
+
+logit_model_final <- glm(
+  fail ~
+    avg_dst_nr_ + avg_dst_trn + avg_dst_cntr +
+    Vacancy_Rate + Med_Inc + Pct_Renter_Occupied + Rent_Burden +
+    log_comm_avg_mv + log_comm_avg_age + log_n_comm_properties +
+    log_sf_avg_mv + log_mf_avg_mv + log_mf_avg_age +
+    log_n_requests + bldngcrtt +
+    avg_dst_nr_:Vacancy_Rate +
+    Pct_Renter_Occupied:log_n_requests +
+    log_comm_avg_age:Med_Inc +
+    avg_dst_cntr:log_comm_avg_mv,
+  data   = train_data_balanced,
+  family = "binomial"
+)
+
+test_data$predicted_prob <- predict(logit_model_final, newdata = test_data, type = "response")
+roc_obj <- roc(test_data$fail, test_data$predicted_prob)
+
+threshold_results <- map_df(seq(0.01, 0.99, by = 0.01), function(t) {
+  pred_class <- as.integer(test_data$predicted_prob > t)
+  if (length(unique(pred_class)) < 2) return(NULL)
+  cm <- confusionMatrix(factor(pred_class), factor(test_data$fail), positive = "1")
+  tibble(
+    threshold   = t,
+    sensitivity = cm$byClass["Sensitivity"],
+    specificity = cm$byClass["Specificity"],
+    accuracy    = cm$overall["Accuracy"],
+    kappa       = cm$overall["Kappa"]
+  )
+})
+
+best_threshold <- threshold_results %>%
+  filter(sensitivity >= 0.80) %>%
+  arrange(desc(specificity)) %>%
+  slice(1)
+
+test_data$predicted_class <- as.integer(test_data$predicted_prob > best_threshold$threshold)
+final_cm <- confusionMatrix(factor(test_data$predicted_class), factor(test_data$fail), positive = "1")
+```
+
+------------------------------------------------------------------------
+
+## The Problem: A Reactive Inspection System
+
+Philadelphia's building inspection system is driven by **complaints**, not risk:
+
+-   Only **\~7%** of rental units inspected annually *(Pew Charitable Trusts, 2021)*
+-   Fewer than **45 inspectors** citywide *(Pew, 2021)*
+-   Complaint-driven system → **systematic underreporting** in vulnerable communities *(Urban Institute, 2022)*
+-   All buildings treated **equally** despite highly **unequal risk**
+
+> The city lacks a systematic way to prioritize which buildings need inspection most.
+
+------------------------------------------------------------------------
+
+## Why This Matters: Inspection Results {.smaller}
+
+```{r result-distribution}
+#| fig-align: center
+#| out-width: 100%
+#| fig-height: 6.5
+
+inspections_fire_opa %>%
+  filter(!is.na(inspctnr)) %>%
+  count(inspctnr) %>%
+  mutate(
+    pct = n / sum(n),
+    inspctnr= reorder(inspctnr, n)
+  ) %>%
+  ggplot(aes(x = inspctnr, y = n, fill =inspctnr)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = scales::percent(pct, accuracy = 0.1)),
+            hjust = -0.1, size = 3.5) +
+  coord_flip() +
+  scale_fill_viridis_d(option = "plasma") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15)),
+                     labels = scales::comma) +
+  labs(
+    title    = "Distribution of Building Inspection Results",
+    subtitle = "Philadelphia L&I Inspections",
+    x = NULL, y = "Number of Inspections",
+    caption  = "Source: OpenDataPhilly"
+  ) +
+  plotTheme
+```
+
+These results show that only a small share of inspections fail (\~5%).
+
+However, these failures are not random—they cluster and follow patterns.
+
+→ Opportunity to prioritize inspections based on risk.
+
+------------------------------------------------------------------------
+
+## Failure Rates Vary by Certification Type
+
+```{r cert-type-results}
+#| fig-align: center
+#| out-width: 85%
+
+inspections_fire_opa %>%
+  filter(!is.na(inspctnr), !is.na(bldngcrtt)) %>%
+  count(bldngcrtt, inspctnr) %>%
+  group_by(bldngcrtt) %>%
+  mutate(pct = n / sum(n)) %>%
+  ggplot(aes(x = reorder(bldngcrtt, pct), y = pct, fill = inspctnr)) +
+  geom_col(position = "stack") +
+  coord_flip()  +
+  labs(
+    title    = "Inspection Results by Certification Type",
+    subtitle = "Failure rates vary significantly by certification type",
+    x = NULL, y = "Share of Inspections",
+    caption  = "Source: OpenDataPhilly"
+  ) +
+  plotTheme
+```
+
+Certification type is an important control—we account for this in the model.
+
+------------------------------------------------------------------------
+
+## The Data: Five Sources Joined at the Block Group {.scrollable .smaller}
+
+| Source | What it contributes |
+|------------------------------------|------------------------------------|
+| **L&I Building Certifications** | Outcome variable: pass / fail; certification type fixed effects |
+| **OPA Property Data** | Market value, age, property count — split by SF / MF / commercial land use |
+| **311 Fire Complaints** | Fire department request volume per block group — early warning signal |
+| **Census ACS 2022** | Median income, vacancy rate, % renter-occupied, rent burden |
+| **Spatial distances** | Distance to nearest inspection (`avg_dst_nr_`), transit, city center |
+
+Each **property-level** observation is enriched by its surrounding **block group context**.
+
+------------------------------------------------------------------------
+
+## Where Do Failures Cluster?
+
+```{r failure-map}
+#| fig-align: center
+#| out-width: 85%
+
+ggplot() +
+  geom_sf(data = block_groups, fill = "grey90", color = "white", linewidth = 0.1) +
+  geom_sf(
+    data  = inspections_fire_opa %>% filter(fail == 0),
+    color = "#2166ac", size = 0.2, alpha = 0.2
+  ) +
+  geom_sf(
+    data  = inspections_fire_opa %>% filter(fail == 1),
+    color = "#d6604d", size = 0.5, alpha = 0.6
+  ) +
+  labs(
+    title    = "Spatial Distribution of Inspection Failures",
+    subtitle = "Red = Failed (Deficient/Unsafe) · Blue = Passed",
+    caption  = "Source: Philadelphia L&I; OpenDataPhilly"
+  ) +
+  mapTheme
+```
+
+------------------------------------------------------------------------
+
+## Modeling Approach: Iterative Logistic Regression {.scrollable .smaller}
+
+**Why logistic regression?** Binary outcome (fail/pass), interpretable odds ratios, handles continuous + categorical predictors and interaction terms.
+
+| Model | Key change | Issue found |
+|------------------------|------------------------|------------------------|
+| Model 1 | Distance features only, imbalanced data | Near-zero sensitivity — almost no failures predicted |
+| Model 2 | \+ ACS features + interactions | Still imbalanced |
+| Model 3 | \+ `upSample()` + threshold lowered to 0.3 | Sensitivity 94% but specificity only 35% |
+| Model 4 | \+ `bldngcrtt` fixed effects, threshold scan (sensitivity ≥ 0.80) | Near-final |
+| **Final** | Dropped noise variables, kept 4 key interactions | **AUC = 0.802** |
+
+------------------------------------------------------------------------
+
+## Final Model Predictors and Key Interactions {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+**What we capture**
+
+-   **Spatial risk**
+    -   Proximity to other inspections\
+    -   Distance to transit and city center
+-   **Neighborhood context**
+    -   Vacancy rate\
+    -   Income and rent burden\
+    -   Share of renter-occupied housing
+:::
+
+::: {.column width="50%"}
+**Behavioral & environmental signals**
+
+-   311 complaint activity\
+-   Property characteristics (age, value, density)\
+-   Certification type (controls for inspection differences)
+
+**Key idea**
+
+-   Risk is shaped by how these factors interact — not any single variable
+:::
+:::::
+
+------------------------------------------------------------------------
+
+## What Drives Failure? Odds Ratios
+
+```{r odds-ratios-plot}
+#| fig-align: center
+#| out-width: 85%
+
+or_data <- tribble(
+  ~predictor,                            ~OR,    ~direction,
+  "Sprinkler cert. (vs baseline)",       3.66,  "Increases risk",
+  "Commercial market value",             1.32,  "Increases risk",
+  "Multifamily market value",            1.31,  "Increases risk",
+  "Multifamily building age",            1.22,  "Increases risk",
+  "Vacancy rate (per pct pt)",           1.02,  "Increases risk",
+  "Rent burden",                         1.008, "Increases risk",
+  "Renter occ. × 311 calls (interact.)", 1.011, "Increases risk",
+  "Single-family market value",          0.665, "Decreases risk",
+  "Commercial building age (standalone)",0.695, "Decreases risk",
+  "311 call volume (standalone)",        0.733, "Decreases risk",
+  "Commercial property density",         0.849, "Decreases risk",
+  "Median income",                       0.9999,"Decreases risk"
+)
+
+ggplot(or_data, aes(x = reorder(predictor, OR), y = OR, fill = direction)) +
+  geom_col(width = 0.7) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "grey40", linewidth = 0.8) +
+  coord_flip() +
+  scale_fill_manual(
+    values = c("Increases risk" = "#d62728", "Decreases risk" = "#2166ac"),
+    name   = NULL
+  ) +
+  labs(
+    title    = "Odds Ratios: Final Logistic Regression Model",
+    subtitle = "OR > 1 increases failure risk · OR < 1 decreases failure risk · Dashed = OR of 1",
+    x = NULL, y = "Odds Ratio",
+    caption  = "Source: Philadelphia L&I; OPA; ACS 2022"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom", panel.grid.minor = element_blank())
+```
+
+------------------------------------------------------------------------
+
+## Handling Class Imbalance and Threshold Selection {.smaller}
+
+```{r threshold-plot}
+#| fig-align: center
+#| out-width: 75%
+
+threshold_results %>%
+  pivot_longer(cols = c(sensitivity, specificity, kappa),
+               names_to = "metric", values_to = "value") %>%
+  ggplot(aes(x = threshold, y = value, color = metric)) +
+  geom_line(linewidth = 1.2) +
+  geom_vline(xintercept = best_threshold$threshold,
+             linetype = "dashed", color = "grey40") +
+  annotate("text",
+           x     = best_threshold$threshold + 0.03,
+           y     = 0.45,
+           label = paste0("selected t = ", best_threshold$threshold),
+           size  = 3.5, color = "grey30") +
+  scale_color_viridis_d(option = "plasma", name = "Metric") +
+  labs(
+    title    = "Performance Across Classification Thresholds",
+    subtitle = "upSample() balanced the training set · threshold scanned 0.01–0.99 for sensitivity ≥ 0.80",
+    x = "Threshold", y = "Value",
+    caption  = "Source: Philadelphia L&I"
+  ) +
+  plotTheme
+```
+
+::: smaller
+We selected a threshold that prioritizes identifying unsafe buildings.
+
+This ensures we capture most high-risk properties, even if it means inspecting some low-risk ones.
+:::
+
+------------------------------------------------------------------------
+
+## Final Model Performance
+
+```{r final-metrics-table}
+tibble(
+  Metric = c("AUC", "Sensitivity", "Specificity", "NPV", "Threshold"),
+  Value  = c(
+    round(auc(roc_obj), 3),
+    round(final_cm$byClass["Sensitivity"], 3),
+    round(final_cm$byClass["Specificity"], 3),
+    round(final_cm$byClass["Neg Pred Value"], 3),
+    best_threshold$threshold
+  ),
+  Interpretation = c(
+    "Good discrimination — model meaningfully separates high and low risk properties",
+    "Catches 81% of actual failures — meets our target for a triage tool",
+    "Correctly clears 63% of safe buildings — reduces unnecessary inspections",
+    "If model says safe, it is correct 99% of the time — key for prioritization",
+    "Tuned to prioritize recall over precision given the cost of missed failures"
+  )
+) %>%
+  kable(align = "lll") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 19) %>%
+  row_spec(4, bold = TRUE, background = "#e8f5e9")
+```
+
+------------------------------------------------------------------------
+
+## Where Does the Model Struggle? Residual Map
+
+```{r residual-map}
+#| fig-align: center
+#| out-width: 85%
+
+insp_coords <- inspections_fire_opa %>%
+  st_transform(crs = 4326) %>%
+  mutate(
+    lon = st_coordinates(.)[, 1],
+    lat = st_coordinates(.)[, 2]
+  ) %>%
+  st_drop_geometry()
+
+test_data_sf <- test_data %>%
+  left_join(insp_coords %>% select(objectd, lon, lat), by = "objectd") %>%
+  mutate(residual = fail - predicted_prob) %>%
+  filter(!is.na(residual), !is.na(lon), !is.na(lat)) %>%
+  st_as_sf(coords = c("lon", "lat"), crs = 4326)
+
+ggplot() +
+  geom_sf(data = block_groups, fill = "grey90", color = "white", linewidth = 0.1) +
+  geom_sf(data = test_data_sf, aes(color = residual), size = 0.5, alpha = 0.6) +
+  scale_color_gradient2(
+    low = "#2166ac", mid = "white", high = "#d6604d",
+    midpoint = 0, name = "Residual\n(actual − predicted)"
+  ) +
+  labs(
+    title    = "Spatial Distribution of Model Residuals",
+    subtitle = "Red = under-predicted risk · Blue = over-predicted risk · Moran's I confirms residual spatial autocorrelation",
+    caption  = "Source: OPA Philadelphia"
+  ) +
+  mapTheme
+```
+
+------------------------------------------------------------------------
+
+## Limitations and Bias {.scrollable .smaller}
+
+**The training data reflects enforcement, not true risk**\
+The model learns from where the city *already* inspects—complaint-driven neighborhoods are overrepresented. It captures enforcement patterns, not underlying building conditions.
+
+**Underreporting compounds over time**\
+Vulnerable communities call 311 less → lower predicted risk → fewer inspections → continued under-enforcement. The `Pct_Renter_Occupied × log_n_requests` interaction captures this partially but does not resolve it.
+
+**Certification type dominates (OR = 3.66)**\
+Sprinkler inspections fail at 3.7× the baseline rate. This is a legitimate control variable but means the model is partly predicting *what kind of inspection was scheduled*, not just building condition.
+
+**Residual spatial autocorrelation**\
+Moran's I on residuals shows remaining spatial structure, suggesting spatial cross-validation and additional spatial features as clear next steps.
+
+> **This is a decision-support tool. It should inform inspector deployment, not replace human judgment.**
+
+------------------------------------------------------------------------
+
+## Implementation and Safeguards {.scrollable .smaller}
+
+**How the city uses this:**
+
+1.  Run final model on all L&I-registered properties periodically
+2.  Assign predicted failure probability (0–1) to each building
+3.  Sort into risk tiers (High / Medium / Low) by district
+4.  Produce prioritized inspection lists for field staff
+5.  Retrain quarterly as new inspection outcomes accumulate
+
+**Required safeguards:**
+
+-   Human oversight: scores inform, not replace, inspector decisions
+-   Equity audits by census tract: monitor for systematic over/under-prediction in lower-income areas
+-   Transparent methodology: public documentation and grievance process
+-   Model monitoring: flag degradation in cross-validated AUC over time
+
+------------------------------------------------------------------------
+
+## References {.smaller}
+
+**Data Sources**
+
+-   Philadelphia Department of Licenses & Inspections - Building Certifications (OpenDataPhilly)
+-   City of Philadelphia Office of Property Assessment - `opa_properties_public.geojson`
+-   Philadelphia 311 Service Requests - Fire Department calls (OpenDataPhilly)
+-   U.S. Census Bureau - American Community Survey 5-Year Estimates, 2022, block group level
+
+**References**
+
+-   Pew Charitable Trusts (2021). *Philadelphia's Rental Housing Challenge.*
+-   Urban Institute (2022). *Who Is Left Behind by Complaint-Based Code Enforcement?*
+-   National Low Income Housing Coalition (2022). *Out of Reach: The High Cost of Housing.*
+
+**R Packages**
+
+`tidyverse` · `sf` · `tidycensus` · `tigris` · `caret` · `pROC` · `spdep` · `kableExtra`

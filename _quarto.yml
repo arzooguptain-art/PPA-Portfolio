@@ -25,6 +25,8 @@ website:
             text: "Lab 5: Bikeshare SpaceTime Prediction"
           - href: Labs/Final_Challenge/TechnicalAppendix_Final_v1.qmd
             text: "Philadelphia Fire Inspection Risk Model"
+          - href: Labs/Final_Challenge/presentation_final_v2.qmd
+            text: "Presentation: Fire Inspection Model"
 
       
 format:

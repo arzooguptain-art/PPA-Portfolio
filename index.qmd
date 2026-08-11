@@ -4,7 +4,7 @@ title: "Arzoo Gupta - MUSA 5080 Portfolio"
 
 # Welcome to My Portfolio
 
-This portfolio documents my learning journey in Public Policy Analytics (MUSA 5080).
+This portfolio documents my learning journey in Public Policy Analytics (MUSA 5080). This represents the expertise I've built in analysis, and predictive modeling, it uses spatial, basic ML, binomial, poisson, and time-based models on a wide range of policy issues such as housing prices, infrastructural failure, and micromobility. Presenting the drawbacks and advantages of using automated models and also the issues baked into them as a result of limitations such as data availability. 
 
 ## About This Course
 
@@ -12,13 +12,12 @@ Advanced spatial analysis and data science for urban planning and public policy.
 
 ## Portfolio Structure
 
--   **Weekly Notes:** My learning reflections and key concepts
 -   **Labs:** Completed assignments and analyses
 -   **Final Project:** Capstone modeling challenge
 
 ## About Me
 
-I am Arzoo Gupta, a Master of City Planning Student, with a concentration in sustainable transportation and with a background in Sociology and Anthropology, and Political Science.
+I am Arzoo Gupta, a Master of City Planning Student, with a concentration in sustainable transportation and with a background in Sociology and Anthropology, and Political Science. 
 
 ## Contact
 

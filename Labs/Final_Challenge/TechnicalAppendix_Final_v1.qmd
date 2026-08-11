@@ -104,7 +104,7 @@ mapTheme <- theme_void() +
 The following table summarises all data sources used in the analysis, what each contributes, and their vintage.
 
 | Source | Contribution |
-|------------------------------------|------------------------------------|
+|----|----|
 | L&I Building Certifications (OpenDataPhilly) | Outcome variable: pass/fail; certification type fixed effects |
 | OPA Property Data (OpenDataPhilly) | Market value, building age, property count by land use type |
 | Philadelphia 311 Service Requests (OpenDataPhilly) | Fire Department complaint volume by block group |
@@ -1359,7 +1359,7 @@ plot(roc_final, col = "#08519c",
 **Summary of final model performance:**
 
 | Metric | Value | Interpretation |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | AUC | 0.803 | Good discrimination — model meaningfully separates high and low risk |
 | Sensitivity | 0.808 | Catches 81% of actual failures |
 | Specificity | 0.630 | Correctly clears 63% of safe buildings |
